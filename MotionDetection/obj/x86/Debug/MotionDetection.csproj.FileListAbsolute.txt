@@ -1,0 +1,17 @@
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.Properties.Resources.resources
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.csproj.GenerateResource.Cache
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\bin\Debug\MotionDetection.exe
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\bin\Debug\MotionDetection.pdb
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.exe
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.pdb
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.Form1.resources
+C:\Users\C0BRA\Documents\Visual Studio 10\Projects\MotionDetection\MotionDetection\bin\Debug\WebCam_Capture.dll
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.exe
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.pdb
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.csproj.GenerateResource.Cache
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.exe
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.pdb
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Form1.resources
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Properties.Resources.resources
