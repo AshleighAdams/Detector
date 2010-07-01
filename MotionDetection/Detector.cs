@@ -376,9 +376,9 @@ namespace Detector
 
                         avg = (byte)((r + g + b) / 3);
 
-                        if ((r > _diffrence ||
-                            g > _diffrence ||
-                            b > _diffrence ) &&
+                        if ((r > _Difference ||
+                            g > _Difference ||
+                            b > _Difference ) &&
                             IsInsideIgnoreArea(x, y) == false
                             )
                         {
@@ -407,15 +407,15 @@ namespace Detector
         /// <summary>
         /// The accuracy of detecting motion (helps reduce noise)
         /// </summary>
-        public int Diffrence
+        public int Difference
         {
             get
             {
-                return this._diffrence;
+                return this._Difference;
             }
             set
             {
-                this._diffrence = value;
+                this._Difference = value;
             }
         }
         public Image IgnoreMotion
@@ -510,7 +510,7 @@ namespace Detector
         }
         private int _noisereduction = 5;
         private int _maxjoindistance = 30;
-        private int _diffrence = 50;
+        private int _Difference = 50;
         private Image _last_img = null;
         private Image _cur_img = null;
         private byte[,] IgnoreMotionPixels;

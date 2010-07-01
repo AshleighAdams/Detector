@@ -72,9 +72,9 @@ namespace Detector
             tmrCheckMotion.Interval = int.Parse( tbSpeed.Text );
         }
 
-        private void tbDiffrence_Validating(object sender, CancelEventArgs e)
+        private void tbDifference_Validating(object sender, CancelEventArgs e)
         {
-            detector.Diffrence = int.Parse(tbDiffrence.Text);
+            detector.Difference = int.Parse(tbDifference.Text);
         }
 
 
@@ -116,9 +116,9 @@ namespace Detector
             pbLast.Image = frames[frames.Length - 1];
         }
 
-        private void tbDiffrence_Scroll(object sender, EventArgs e)
+        private void tbDifference_Scroll(object sender, EventArgs e)
         {
-            detector.Diffrence = tbDiffrence.Value;
+            detector.Difference = tbDifference.Value;
         }
 
         private void pbIgnoreMotion_Click(object sender, EventArgs e)

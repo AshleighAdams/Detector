@@ -42,13 +42,13 @@
             this.btnContinue = new System.Windows.Forms.Button();
             this.cbOn = new System.Windows.Forms.CheckBox();
             this.tbSpeed = new System.Windows.Forms.TextBox();
-            this.tbDiffrence = new System.Windows.Forms.TrackBar();
+            this.tbDifference = new System.Windows.Forms.TrackBar();
             this.pbIgnoreMotion = new System.Windows.Forms.PictureBox();
             this.ofd = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCurrent)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbMotion)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDiffrence)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDifference)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbIgnoreMotion)).BeginInit();
             this.SuspendLayout();
             // 
@@ -160,18 +160,18 @@
             this.tbSpeed.Text = "100";
             this.tbSpeed.Validating += new System.ComponentModel.CancelEventHandler(this.tbSpeed_Validating);
             // 
-            // tbDiffrence
+            // tbDifference
             // 
-            this.tbDiffrence.LargeChange = 10;
-            this.tbDiffrence.Location = new System.Drawing.Point(12, 196);
-            this.tbDiffrence.Maximum = 160;
-            this.tbDiffrence.Minimum = 5;
-            this.tbDiffrence.Name = "tbDiffrence";
-            this.tbDiffrence.Size = new System.Drawing.Size(156, 45);
-            this.tbDiffrence.TabIndex = 15;
-            this.tbDiffrence.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tbDiffrence.Value = 60;
-            this.tbDiffrence.Scroll += new System.EventHandler(this.tbDiffrence_Scroll);
+            this.tbDifference.LargeChange = 10;
+            this.tbDifference.Location = new System.Drawing.Point(12, 196);
+            this.tbDifference.Maximum = 160;
+            this.tbDifference.Minimum = 5;
+            this.tbDifference.Name = "tbDifference";
+            this.tbDifference.Size = new System.Drawing.Size(156, 45);
+            this.tbDifference.TabIndex = 15;
+            this.tbDifference.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tbDifference.Value = 60;
+            this.tbDifference.Scroll += new System.EventHandler(this.tbDifference_Scroll);
             // 
             // pbIgnoreMotion
             // 
@@ -195,7 +195,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 500);
             this.Controls.Add(this.pbIgnoreMotion);
-            this.Controls.Add(this.tbDiffrence);
+            this.Controls.Add(this.tbDifference);
             this.Controls.Add(this.tbSpeed);
             this.Controls.Add(this.cbOn);
             this.Controls.Add(this.btnContinue);
@@ -212,7 +212,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCurrent)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbMotion)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDiffrence)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDifference)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbIgnoreMotion)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -233,7 +233,7 @@
         private System.Windows.Forms.Button btnContinue;
         private System.Windows.Forms.CheckBox cbOn;
         private System.Windows.Forms.TextBox tbSpeed;
-        private System.Windows.Forms.TrackBar tbDiffrence;
+        private System.Windows.Forms.TrackBar tbDifference;
         private System.Windows.Forms.PictureBox pbIgnoreMotion;
         private System.Windows.Forms.OpenFileDialog ofd;
     }
