@@ -8,7 +8,7 @@
     <ProjectGuid>{9B70CBE2-BAF8-4594-8CC5-D5A406A4289F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Detector</RootNamespace>
+    <RootNamespace>Detector.Motion.Motion</RootNamespace>
     <AssemblyName>MotionDetection</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

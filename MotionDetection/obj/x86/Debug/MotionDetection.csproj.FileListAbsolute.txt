@@ -13,5 +13,5 @@ C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debu
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.csproj.GenerateResource.Cache
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.exe
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.pdb
-C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Form1.resources
-C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Properties.Resources.resources
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Motion.Form1.resources
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Motion.Motion.Properties.Resources.resources

@@ -7,16 +7,18 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Detector;
+using Detector.Motion;
 using System.Diagnostics;
+using Detector.Tracking;
 using WebCam;
 
-namespace Detector
+namespace Detector.Motion
 {
     public partial class Form1 : Form
     {
         WebCam.WebCam webcam;
-        Detector detector = new Detector();
+        MotionDetector detector = new MotionDetector();
+        ObjectTracker tracker = new ObjectTracker();
         public Form1()
         {
             InitializeComponent();
@@ -27,14 +29,7 @@ namespace Detector
             webcam = new WebCam.WebCam();
             webcam.InitializeWebCam(ref pbCurrent);
         }
-
-        private void tmrSetPlace_Tick(object sender, EventArgs e)
-        {
-            pbLast.Image = pbCurrent.Image;
-            tmrSetPlace.Enabled = false;
-        }
-
-        
+       
 
         private void btnStart_Click(object sender, EventArgs e)
         {
@@ -94,22 +89,24 @@ namespace Detector
             //{
             Bitmap bmp = new Bitmap(pbCurrent.Image);
             detector.SetNextImages(pbLast.Image, pbCurrent.Image);
-            foreach (Target t in detector.GetTargets())
+            tracker.UpdateTargets(new List<Target>(detector.GetTargets()).ToArray());
+
+            foreach (ObjectTracked obj in tracker.GetObjects())
             {
 
-                for (int x = t.X; x < t.X + t.SizeX; x++)
+                for (int x = obj.Position.X; x < obj.Position.X + obj.Size.X; x++)
                 {
                     if (x >= cur_img.Width)
                         break;
-                    bmp.SetPixel(x, t.Y, Color.Red);
-                    bmp.SetPixel(x, Math.Min( cur_img.Height-1, t.Y + t.SizeY), Color.Red);
+                    bmp.SetPixel(x, obj.Position.Y, Color.Red);
+                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, obj.Position.Y + obj.Size.Y), Color.Red);
                 }
-                for (int y = t.Y; y < t.Y + t.SizeY; y++)
+                for (int y = obj.Position.Y; y < obj.Position.Y + obj.Size.Y; y++)
                 {
                     if (y >= cur_img.Height)
                         break;
-                    bmp.SetPixel(t.X, y, Color.Red);
-                    bmp.SetPixel(Math.Min( cur_img.Width-1, t.X + t.SizeX ), y, Color.Red);
+                    bmp.SetPixel(obj.Position.X, y, Color.Red);
+                    bmp.SetPixel(Math.Min(cur_img.Width - 1, obj.Position.X + obj.Size.X), y, Color.Red);
                 }
                 
             }

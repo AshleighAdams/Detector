@@ -1,4 +1,4 @@
-﻿namespace Detector
+﻿namespace Detector.Motion
 {
     partial class Form1
     {
@@ -33,7 +33,6 @@
             this.pbLast = new System.Windows.Forms.PictureBox();
             this.pbCurrent = new System.Windows.Forms.PictureBox();
             this.pbMotion = new System.Windows.Forms.PictureBox();
-            this.tmrSetPlace = new System.Windows.Forms.Timer(this.components);
             this.tmrCheckMotion = new System.Windows.Forms.Timer(this.components);
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -80,11 +79,6 @@
             this.pbMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbMotion.TabIndex = 3;
             this.pbMotion.TabStop = false;
-            // 
-            // tmrSetPlace
-            // 
-            this.tmrSetPlace.Interval = 3000;
-            this.tmrSetPlace.Tick += new System.EventHandler(this.tmrSetPlace_Tick);
             // 
             // tmrCheckMotion
             // 
@@ -224,7 +218,6 @@
         private System.Windows.Forms.PictureBox pbLast;
         private System.Windows.Forms.PictureBox pbCurrent;
         private System.Windows.Forms.PictureBox pbMotion;
-        private System.Windows.Forms.Timer tmrSetPlace;
         private System.Windows.Forms.Timer tmrCheckMotion;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;

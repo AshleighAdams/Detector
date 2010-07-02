@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Detector")]
+[assembly: AssemblyTitle("MotionDetector.Motion")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("XiaTek")]
-[assembly: AssemblyProduct("Detector")]
+[assembly: AssemblyProduct("MotionDetector.Motion")]
 [assembly: AssemblyCopyright("Copyright © XiaTek 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

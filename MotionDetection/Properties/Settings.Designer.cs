@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Detector.Properties {
+namespace Detector.Motion.Motion.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

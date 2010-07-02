@@ -13,9 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Detector.Motion;
 
-
-namespace Detector
+namespace Detector.Motion
 {
     /// <summary>
     /// Data of a target
@@ -92,14 +92,14 @@ namespace Detector
     /// <summary>
     /// The engine in which detects the motion and put it in an easy to use format
     /// </summary>
-    public class Detector
+    public class MotionDetector
     {
         /// <summary>
         /// Compare to images to one another
         /// </summary>
         /// <param name="last_img">The previous image</param>
         /// <param name="cur_img">The current image</param>
-        public Detector(Image last_img, Image cur_img)
+        public MotionDetector(Image last_img, Image cur_img)
         {
             _last_img = last_img;
             _cur_img = cur_img;
@@ -107,7 +107,7 @@ namespace Detector
         /// <summary>
         /// The engine in which detects the motion and put it in an easy to use format
         /// </summary>
-        public Detector()
+        public MotionDetector()
         {
             
         }
@@ -523,5 +523,279 @@ namespace Detector
             throw new Exception(error);
             #endif
         }
+    }
+}
+
+namespace Detector.Tracking
+{
+    public class ObjectTracked
+    {
+        public ObjectTracked(int ID, Point Pos, Rectangle Size)
+        {
+            _Position = Pos;
+            _Size = Size;
+            _StartedTracking = DateTime.Now;
+            _LastSeen = DateTime.Now;
+            _Velocity = new Point(0, 0);
+            _LastPos = _Position;
+            _LastSize = _Size;
+            _ID = ID;
+        }
+
+        #region Properties
+
+        /// <summary>
+        /// When the object was started to be tracked
+        /// </summary>
+        public DateTime StartedTracking
+        {
+            get
+            {
+                return _StartedTracking;
+            }
+            set
+            {
+                _StartedTracking = value;
+            }
+        }
+        /// <summary>
+        /// How long the object has been tracked
+        /// </summary>
+        public TimeSpan LifeTime
+        {
+            get
+            {
+                return DateTime.Now - _StartedTracking;
+            }
+        }
+        /// <summary>
+        /// The position of the object (When set it automaticly updates velocity
+        /// </summary>
+        public Point Position
+        {
+            get
+            {
+                return _Position;
+            }
+            set
+            {
+                _LastPos = _Position;
+                _Position = value;
+                _Velocity.X = _Position.X - _LastPos.X;
+                _Velocity.Y = _Position.Y - _LastPos.Y;
+                _LastSeen = DateTime.Now;
+            }
+        }
+        /// <summary>
+        /// The position it was at last
+        /// </summary>
+        public Point LastPos
+        {
+            get
+            {
+                return _LastPos;
+            }
+        }
+        /// <summary>
+        /// The size of the object
+        /// </summary>
+        public Rectangle Size
+        {
+            get
+            {
+                return _Size;
+            }
+            set
+            {
+                _LastSize = _Size;
+                _Size = value;
+            }
+        }
+        /// <summary>
+        /// The size previos size of the 
+        /// </summary>
+        public Rectangle LastSize
+        {
+            get
+            {
+                return _LastSize;
+            }
+        }
+        /// <summary>
+        /// Unique Identifier
+        /// </summary>
+        public int ID
+        {
+            get
+            {
+                return _ID;
+            }
+            set
+            {
+                _ID = value;
+            }
+        }
+        public DateTime LastSeen
+        {
+            get
+            {
+                return _LastSeen;
+            }
+        }
+
+        /// <summary>
+        /// Get the score of the target to check if it is the correct one
+        /// </summary>
+        /// <param name="t">The Target</param>
+        /// <returns>Score</returns>
+        public int GetScore(Target t)  /////////// FINISH ME!
+        {
+            // 50 is MaxBadScoreDistance
+            float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X,_Position.Y) / 100); // score algo with max being 1 for all of them
+            
+            // 50 is MaxBadScoreVelocity
+            float vel_x = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 100);
+            float vel_y = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 100);
+
+            // 50 is MaxBadScoreSize
+            float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 100);
+            float size_y = 1 - Math.Min(1, Math.Abs(t.SizeY - _Size.Y) / 100);
+
+            float score_size = (size_x+size_y)/2;
+            float score_vel = (vel_x+vel_y)/2;
+
+            return (int)( (score_pos+score_size+score_vel)/3 ) * 100;
+        }
+
+        /// <summary>
+        /// Calculate the distance between to points
+        /// </summary>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="a">X</param>
+        /// <param name="b">Y</param>
+        /// <returns></returns>
+        private int Distance(int x, int y, int a, int b)
+        {
+            int xx = Math.Abs(x - a);
+            int yy = Math.Abs(y - b);
+            return (int)Math.Sqrt(xx * xx + yy * yy);
+        }
+
+
+        private DateTime _StartedTracking;
+        private DateTime _LastSeen;
+        private Point _Position;
+        private Rectangle _Size;
+        private Point _Velocity;
+        private Point _LastPos;
+        private Rectangle _LastSize;
+        private int _ID;
+        #endregion
+    }
+
+    public class ObjectTracker
+    {
+        public ObjectTracker()
+        {
+        }
+
+
+        /// <summary>
+        /// Update all the targets
+        /// </summary>
+        /// <param name="targs">Array of the targets</param>
+        public void UpdateTargets(Target[] targs)
+        {
+            _targets = targs;
+        }
+
+        /// <summary>
+        /// Get the tracked objects
+        /// </summary>
+        /// <returns>Objects</returns>
+        public IEnumerable<ObjectTracked> GetObjects()
+        {
+            int count = 0; // wether we got anything or nothing
+            foreach (Target t in _targets)
+            {
+                int best_score = 0;     // does this object have a target to belong to? well find out with these vars for later checking
+                ObjectTracked best_scorer = null;
+                int score;
+                foreach (ObjectTracked obj in _objects_tracked)
+                {
+                    score = obj.GetScore(t);
+                    if (score > _min_score) // we will check if its more than the threshhold later
+                    {
+                        best_score = score;
+                        best_scorer = obj;
+                    }
+                }
+                if (best_score > _min_score)
+                {
+                    // woot we got the obj's target
+                    best_scorer.Position = new Point(t.X, t.Y);
+                    best_scorer.Size = new Rectangle(t.SizeX, t.SizeY, 0, 0);
+                }
+                else
+                {
+                    ObjectTracked new_obj = new ObjectTracked(_i++, new Point(t.X,t.Y),new Rectangle(t.SizeX,t.SizeY,0,0));
+                    _objects_tracked.AddLast(new_obj);
+                }
+            }
+            for(int i =0;i<_objects_tracked.Count;i++)
+            {
+                ObjectTracked obj = _objects_tracked.ToArray()[i];
+                int ms_ago = (int)(DateTime.Now - obj.LastSeen).TotalMilliseconds;
+                if (ms_ago < _miliseconds_unseen_till_removed)
+                {
+                    yield return obj;
+                    count++;
+                }
+                else
+                {
+                    _objects_tracked.Remove(obj);
+                }
+                i++;
+            }
+            if (count <= 0)
+                yield break;
+        }
+
+        #region Properties
+        /// <summary>
+        /// The minimuim object recognition until a new object is created
+        /// </summary>
+        public int MinimuimObjectScore
+        {
+            get
+            {
+                return _min_score;
+            }
+            set
+            {
+                _min_score = value;
+            }
+        }
+        /// <summary>
+        /// The number of miliseconds the target will go untracked before it is removed
+        /// </summary>
+        public int UnseenRemovalLimit
+        {
+            get
+            {
+                return _miliseconds_unseen_till_removed;
+            }
+            set
+            {
+                _miliseconds_unseen_till_removed = value;
+            }
+        }
+        #endregion
+        private int _min_score = 10;
+        private int _i;
+        private int _miliseconds_unseen_till_removed = 1000;
+        private Target[] _targets;
+        private LinkedList<ObjectTracked> _objects_tracked = new LinkedList<ObjectTracked>();
     }
 }
