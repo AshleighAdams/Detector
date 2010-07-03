@@ -635,11 +635,24 @@ namespace Detector.Tracking
                 _ID = value;
             }
         }
+        /// <summary>
+        /// The time the object was last seen
+        /// </summary>
         public DateTime LastSeen
         {
             get
             {
                 return _LastSeen;
+            }
+        }
+        /// <summary>
+        /// The velocity the object is traveling
+        /// </summary>
+        public Point Velocity
+        {
+            get
+            {
+                return _Velocity;
             }
         }
 

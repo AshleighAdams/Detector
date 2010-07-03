@@ -44,6 +44,7 @@
             this.tbDifference = new System.Windows.Forms.TrackBar();
             this.pbIgnoreMotion = new System.Windows.Forms.PictureBox();
             this.ofd = new System.Windows.Forms.OpenFileDialog();
+            this.lblData = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCurrent)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbMotion)).BeginInit();
@@ -183,11 +184,22 @@
             this.ofd.FileName = "IgnoreMotionBitmap";
             this.ofd.Filter = "BMP Files|*.bmp|All Files|*.*";
             // 
+            // lblData
+            // 
+            this.lblData.AutoSize = true;
+            this.lblData.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblData.ForeColor = System.Drawing.Color.Red;
+            this.lblData.Location = new System.Drawing.Point(378, 24);
+            this.lblData.Name = "lblData";
+            this.lblData.Size = new System.Drawing.Size(0, 23);
+            this.lblData.TabIndex = 17;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 500);
+            this.Controls.Add(this.lblData);
             this.Controls.Add(this.pbIgnoreMotion);
             this.Controls.Add(this.tbDifference);
             this.Controls.Add(this.tbSpeed);
@@ -229,6 +241,7 @@
         private System.Windows.Forms.TrackBar tbDifference;
         private System.Windows.Forms.PictureBox pbIgnoreMotion;
         private System.Windows.Forms.OpenFileDialog ofd;
+        private System.Windows.Forms.Label lblData;
     }
 }
 

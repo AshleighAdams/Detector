@@ -116,9 +116,14 @@ namespace Detector.Motion
             #endregion
 
             #region DrawTargets
+            string lable_data = "";
             ObjectTracked[] objs = new List<ObjectTracked>(tracker.GetObjects()).ToArray();
+            lable_data += "Tracking " + objs.Length.ToString() + " objects\n";
             foreach (ObjectTracked obj in objs)
             {
+                lable_data += "ID: " + obj.ID + "\n";
+                Point vel = obj.Velocity;
+                lable_data += "\tVel  X: " + vel.X + "  Y: " + vel.Y + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
                 Color col = Color.FromArgb((int)a, 0, 255, 0);
                 for (int x = obj.Position.X; x < obj.Position.X + obj.Size.X; x++)
@@ -137,6 +142,7 @@ namespace Detector.Motion
                 }
 
             }
+            lblData.Text = lable_data;
             #endregion
 
             pbMotion.Image = bmp;
