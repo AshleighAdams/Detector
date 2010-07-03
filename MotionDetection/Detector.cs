@@ -257,7 +257,7 @@ namespace Detector.Motion
         /// <param name="x">X</param>
         /// <param name="y">Y</param>
         /// <returns></returns>
-        private int InRangeOfTarget(ref Target[] targs, int x, int y)
+        private int InRangeOfTarget(ref Target[] targs, int x, int y) ////// This is a bottle neck!!! Speed me up.
         {
             try
             {
@@ -510,7 +510,7 @@ namespace Detector.Motion
             }
         }
         private int _noisereduction = 5;
-        private int _maxjoindistance = 30;
+        private int _maxjoindistance = 15;
         private int _Difference = 50;
         private Image _last_img = null;
         private Image _cur_img = null;
@@ -665,15 +665,15 @@ namespace Detector.Tracking
         public int GetScore(Target t)  /////////// FINISH ME!
         {
             // 100 is MaxBadScoreDistance
-            float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X,_Position.Y) / 100); // score algo with max being 1 for all of them
+            float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X,_Position.Y) / 150); // score algo with max being 1 for all of them
             
             // 50 is MaxBadScoreVelocity
             float vel_x = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
             float vel_y = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
 
             // 50 is MaxBadScoreSize
-            float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 100);
-            float size_y = 1 - Math.Min(1, Math.Abs(t.SizeY - _Size.Y) / 100);
+            float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 50);
+            float size_y = 1 - Math.Min(1, Math.Abs(t.SizeY - _Size.Y) / 50);
 
             float score_size = (size_x+size_y)/2;
             float score_vel = (vel_x+vel_y)/2;

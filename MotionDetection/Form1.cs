@@ -102,6 +102,18 @@ namespace Detector.Motion
 
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
+            Color[] cols = {
+                               Color.Blue,
+                               Color.Green,
+                               Color.Orange,
+                               Color.Purple,
+                               Color.Yellow,
+                               Color.Violet,
+                               Color.DarkGreen,
+                               Color.DarkBlue,
+                               Color.DarkMagenta,
+                               Color.DarkSeaGreen
+                           };
             DateTime start = DateTime.Now;
             Bitmap blur = new Bitmap(pbLast.Image);
             Bitmap __cur = new Bitmap(pbCurrent.Image);
@@ -136,7 +148,7 @@ namespace Detector.Motion
                 lable_data += "\tVel  X: " + vel.X + "  Y: " + vel.Y + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
                 Color col;
-                col = Color.FromArgb(255, 0, 255, 0);
+                col = cols[Math.Min(cols.Length - 1, obj.ID)];
                 if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
                     col = Color.FromArgb((int)a, 255, 0, 0);
                 

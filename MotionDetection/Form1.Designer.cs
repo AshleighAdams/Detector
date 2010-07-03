@@ -188,11 +188,11 @@
             // lblData
             // 
             this.lblData.AutoSize = true;
-            this.lblData.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblData.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblData.ForeColor = System.Drawing.Color.Red;
             this.lblData.Location = new System.Drawing.Point(378, 24);
             this.lblData.Name = "lblData";
-            this.lblData.Size = new System.Drawing.Size(0, 23);
+            this.lblData.Size = new System.Drawing.Size(0, 18);
             this.lblData.TabIndex = 17;
             // 
             // lbHistory
