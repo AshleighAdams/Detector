@@ -1,0 +1,5 @@
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\Debug\bin\Release\Debug.exe
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\Debug\bin\Release\Debug.pdb
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\Debug\obj\Release\ResolveAssemblyReference.cache
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\Debug\obj\Release\Debug.exe
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\Debug\obj\Release\Debug.pdb

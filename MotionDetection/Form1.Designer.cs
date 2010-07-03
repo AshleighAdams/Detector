@@ -45,6 +45,7 @@
             this.pbIgnoreMotion = new System.Windows.Forms.PictureBox();
             this.ofd = new System.Windows.Forms.OpenFileDialog();
             this.lblData = new System.Windows.Forms.Label();
+            this.lbHistory = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCurrent)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbMotion)).BeginInit();
@@ -150,7 +151,7 @@
             // 
             this.tbSpeed.Location = new System.Drawing.Point(139, 171);
             this.tbSpeed.Name = "tbSpeed";
-            this.tbSpeed.Size = new System.Drawing.Size(100, 20);
+            this.tbSpeed.Size = new System.Drawing.Size(43, 20);
             this.tbSpeed.TabIndex = 12;
             this.tbSpeed.Text = "100";
             this.tbSpeed.Validating += new System.ComponentModel.CancelEventHandler(this.tbSpeed_Validating);
@@ -194,11 +195,20 @@
             this.lblData.Size = new System.Drawing.Size(0, 23);
             this.lblData.TabIndex = 17;
             // 
+            // lbHistory
+            // 
+            this.lbHistory.FormattingEnabled = true;
+            this.lbHistory.Location = new System.Drawing.Point(188, 167);
+            this.lbHistory.Name = "lbHistory";
+            this.lbHistory.Size = new System.Drawing.Size(170, 69);
+            this.lbHistory.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1014, 500);
+            this.Controls.Add(this.lbHistory);
             this.Controls.Add(this.lblData);
             this.Controls.Add(this.pbIgnoreMotion);
             this.Controls.Add(this.tbDifference);
@@ -242,6 +252,7 @@
         private System.Windows.Forms.PictureBox pbIgnoreMotion;
         private System.Windows.Forms.OpenFileDialog ofd;
         private System.Windows.Forms.Label lblData;
+        private System.Windows.Forms.ListBox lbHistory;
     }
 }
 

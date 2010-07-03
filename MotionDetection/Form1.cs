@@ -20,6 +20,7 @@ namespace Detector.Motion
         WebCam.WebCam webcam;
         MotionDetector detector = new MotionDetector();
         ObjectTracker tracker = new ObjectTracker();
+        Detector.Helper.ImageHelpers helper = new Detector.Helper.ImageHelpers();
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +30,28 @@ namespace Detector.Motion
         {
             webcam = new WebCam.WebCam();
             webcam.InitializeWebCam(ref pbCurrent);
+
+            tracker.NewObjectTracked += delegate(ObjectTrackedArgs args)
+            {
+                ObjectTracked obj = args.Object;
+                lbHistory.Items.Add("Tacking: " + obj.ID.ToString() + " (" + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() + ":" + DateTime.Now.Second.ToString() + ")");
+                lbHistory.SetSelected(lbHistory.Items.Count - 1, true);
+                lbHistory.SetSelected(lbHistory.Items.Count - 1, false);
+            };
+
+            tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
+            {
+                ObjectTracked obj = args.Object;
+                lbHistory.Items.Add("Lost: " + obj.ID.ToString() + " (" + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() + ":" + DateTime.Now.Second.ToString() + ")");
+                lbHistory.SetSelected(lbHistory.Items.Count - 1, true);
+                lbHistory.SetSelected(lbHistory.Items.Count - 1, false);
+            };
+
+        }
+
+        void tracker_NewObjectTracked(ObjectTrackedArgs oa)
+        {
+            throw new NotImplementedException();
         }
        
 
@@ -79,10 +102,10 @@ namespace Detector.Motion
 
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
-
+            DateTime start = DateTime.Now;
             Bitmap blur = new Bitmap(pbLast.Image);
             Bitmap __cur = new Bitmap(pbCurrent.Image);
-            MotionBlur(ref blur, ref __cur,20);
+            helper.MotionBlur(ref blur, ref __cur, 20);
             pbLast.Image = blur;
 
             Bitmap cur_img = new Bitmap(pbCurrent.Image);
@@ -97,20 +120,7 @@ namespace Detector.Motion
             /*foreach (Target t in targs)
             {
                 
-                for (int x = t.X; x < t.X + t.SizeX; x++)
-                {
-                    if (x >= cur_img.Width)
-                        break;
-                    bmp.SetPixel(x, t.Y, Color.Green);
-                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, t.Y + t.SizeY), Color.Green);
-                }
-                for (int y = t.Y; y < t.Y + t.SizeY; y++)
-                {
-                    if (y >= cur_img.Height)
-                        break;
-                    bmp.SetPixel(t.X, y, Color.Green);
-                    bmp.SetPixel(Math.Min(cur_img.Width - 1, t.X + t.SizeX), y, Color.Green);
-                }
+                
 
             }*/
             #endregion
@@ -125,24 +135,18 @@ namespace Detector.Motion
                 Point vel = obj.Velocity;
                 lable_data += "\tVel  X: " + vel.X + "  Y: " + vel.Y + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
-                Color col = Color.FromArgb((int)a, 0, 255, 0);
-                for (int x = obj.Position.X; x < obj.Position.X + obj.Size.X; x++)
-                {
-                    if (x >= cur_img.Width)
-                        break;
-                    bmp.SetPixel(x, obj.Position.Y, col);
-                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, obj.Position.Y + obj.Size.Y), col);
-                }
-                for (int y = obj.Position.Y; y < obj.Position.Y + obj.Size.Y; y++)
-                {
-                    if (y >= cur_img.Height)
-                        break;
-                    bmp.SetPixel(obj.Position.X, y, col);
-                    bmp.SetPixel(Math.Min(cur_img.Width - 1, obj.Position.X + obj.Size.X), y, col);
-                }
-
+                Color col;
+                col = Color.FromArgb(255, 0, 255, 0);
+                if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
+                    col = Color.FromArgb((int)a, 255, 0, 0);
+                
+                
+                
+                helper.DrawBox(obj, ref bmp, col);
+                //helper.DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
             }
-            lblData.Text = lable_data;
+            double ms = (DateTime.Now - start).TotalMilliseconds;
+            lblData.Text = "Frametime: " + ms.ToString() + " (" + (Math.Round(1000/ms)).ToString() + ") " + lable_data;
             #endregion
 
             pbMotion.Image = bmp;
@@ -167,34 +171,6 @@ namespace Detector.Motion
                 System.Threading.Thread.Sleep(50);
                 detector.IgnoreMotion = pbIgnoreMotion.Image;
             }
-        }
-
-        private unsafe void MotionBlur(ref Bitmap imagetoblur, ref Bitmap current, int ammount)
-        {
-            BitmapData blur = imagetoblur.LockBits(new Rectangle(0, 0, imagetoblur.Width, imagetoblur.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            BitmapData cur = current.LockBits(new Rectangle(0, 0, current.Width, current.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            
-            byte* row_current;
-            byte* row_blur;
-            int R, G, B;
-            for (int y = 0; y < cur.Height; y++)
-                for (int x = 0; x < cur.Width; x++)
-                {
-                    row_current = (byte*)cur.Scan0.ToPointer() + (cur.Stride * y);
-                    row_blur = (byte*)blur.Scan0.ToPointer() + (blur.Stride * y);
-                    B = x * 3 + 0;
-                    G = x * 3 + 1;
-                    R = x * 3 + 2;
-
-                    row_blur[R] = (byte)((int)row_blur[R] + (((int)row_current[R] - (int)row_blur[R]) / ammount));
-                    row_blur[G] = (byte)((int)row_blur[G] + (((int)row_current[G] - (int)row_blur[G]) / ammount));
-                    row_blur[B] = (byte)((int)row_blur[B] + (((int)row_current[B] - (int)row_blur[B]) / ammount));
-
-
-
-                }
-            imagetoblur.UnlockBits(blur);
-            current.UnlockBits(cur);
         }
 
     }
