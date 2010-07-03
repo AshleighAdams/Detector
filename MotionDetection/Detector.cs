@@ -650,12 +650,12 @@ namespace Detector.Tracking
         /// <returns>Score</returns>
         public int GetScore(Target t)  /////////// FINISH ME!
         {
-            // 50 is MaxBadScoreDistance
+            // 100 is MaxBadScoreDistance
             float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X,_Position.Y) / 100); // score algo with max being 1 for all of them
             
             // 50 is MaxBadScoreVelocity
-            float vel_x = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 100);
-            float vel_y = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 100);
+            float vel_x = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
+            float vel_y = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
 
             // 50 is MaxBadScoreSize
             float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 100);
@@ -743,7 +743,30 @@ namespace Detector.Tracking
                     _objects_tracked.AddLast(new_obj);
                 }
             }
-            for(int i =0;i<_objects_tracked.Count;i++)
+            LinkedListNode<ObjectTracked> cur = _objects_tracked.First;
+            while (cur != null)
+            {
+                int ms_ago = (int)(DateTime.Now - cur.Value.LastSeen).TotalMilliseconds;
+                if (ms_ago <= _miliseconds_unseen_till_removed)
+                {
+                    yield return cur.Value;
+                    count++;
+                }
+                else
+                {
+                    LinkedListNode<ObjectTracked> last = cur;
+                    cur = cur.Next;
+                    _objects_tracked.Remove(last);
+                }
+
+                if (cur != null)
+                {
+                    cur = cur.Next;
+                }
+            }
+            /*
+            int i;
+            for(i =0;i<_objects_tracked.Count;i++)
             {
                 ObjectTracked obj = _objects_tracked.ToArray()[i];
                 int ms_ago = (int)(DateTime.Now - obj.LastSeen).TotalMilliseconds;
@@ -755,9 +778,11 @@ namespace Detector.Tracking
                 else
                 {
                     _objects_tracked.Remove(obj);
+                    i--; // acount for the one we just removed
                 }
                 i++;
             }
+            */
             if (count <= 0)
                 yield break;
         }
@@ -794,7 +819,7 @@ namespace Detector.Tracking
         #endregion
         private int _min_score = 10;
         private int _i;
-        private int _miliseconds_unseen_till_removed = 1000;
+        private int _miliseconds_unseen_till_removed = 3000;
         private Target[] _targets;
         private LinkedList<ObjectTracked> _objects_tracked = new LinkedList<ObjectTracked>();
     }

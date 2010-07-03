@@ -11,6 +11,7 @@ using Detector.Motion;
 using System.Diagnostics;
 using Detector.Tracking;
 using WebCam;
+using System.Drawing.Drawing2D;
 
 namespace Detector.Motion
 {
@@ -89,27 +90,55 @@ namespace Detector.Motion
             //{
             Bitmap bmp = new Bitmap(pbCurrent.Image);
             detector.SetNextImages(pbLast.Image, pbCurrent.Image);
-            tracker.UpdateTargets(new List<Target>(detector.GetTargets()).ToArray());
-
-            foreach (ObjectTracked obj in tracker.GetObjects())
+            Target[] targs = new List<Target>(detector.GetTargets()).ToArray();
+            tracker.UpdateTargets(targs);
+            
+            #region DrawMotion
+            /*foreach (Target t in targs)
             {
+                
+                for (int x = t.X; x < t.X + t.SizeX; x++)
+                {
+                    if (x >= cur_img.Width)
+                        break;
+                    bmp.SetPixel(x, t.Y, Color.Green);
+                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, t.Y + t.SizeY), Color.Green);
+                }
+                for (int y = t.Y; y < t.Y + t.SizeY; y++)
+                {
+                    if (y >= cur_img.Height)
+                        break;
+                    bmp.SetPixel(t.X, y, Color.Green);
+                    bmp.SetPixel(Math.Min(cur_img.Width - 1, t.X + t.SizeX), y, Color.Green);
+                }
 
+            }*/
+            #endregion
+
+            #region DrawTargets
+            ObjectTracked[] objs = new List<ObjectTracked>(tracker.GetObjects()).ToArray();
+            foreach (ObjectTracked obj in objs)
+            {
+                double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
+                Color col = Color.FromArgb((int)a, 0, 255, 0);
                 for (int x = obj.Position.X; x < obj.Position.X + obj.Size.X; x++)
                 {
                     if (x >= cur_img.Width)
                         break;
-                    bmp.SetPixel(x, obj.Position.Y, Color.Red);
-                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, obj.Position.Y + obj.Size.Y), Color.Red);
+                    bmp.SetPixel(x, obj.Position.Y, col);
+                    bmp.SetPixel(x, Math.Min(cur_img.Height - 1, obj.Position.Y + obj.Size.Y), col);
                 }
                 for (int y = obj.Position.Y; y < obj.Position.Y + obj.Size.Y; y++)
                 {
                     if (y >= cur_img.Height)
                         break;
-                    bmp.SetPixel(obj.Position.X, y, Color.Red);
-                    bmp.SetPixel(Math.Min(cur_img.Width - 1, obj.Position.X + obj.Size.X), y, Color.Red);
+                    bmp.SetPixel(obj.Position.X, y, col);
+                    bmp.SetPixel(Math.Min(cur_img.Width - 1, obj.Position.X + obj.Size.X), y, col);
                 }
-                
+
             }
+            #endregion
+
             pbMotion.Image = bmp;
             //}
             //frames[0] = pbCurrent.Image;
