@@ -707,12 +707,34 @@ namespace Detector.Tracking
         #endregion
     }
 
+    public class ObjectTrackedArgs : System.EventArgs
+    {
+        private ObjectTracked obj;
+        public ObjectTrackedArgs(ObjectTracked ot)
+        {
+            obj=ot;
+        }
+        public ObjectTracked Object()
+        {
+            return obj;
+        }
+    }
+
     public class ObjectTracker
     {
         public ObjectTracker()
         {
         }
 
+        #region Events
+
+        public delegate void NewObjectTrackedHandeler(ObjectTrackedArgs oa);
+        public event NewObjectTrackedHandeler NewObjectTracked;
+
+        public delegate void LostTrackedObjectHandeler(ObjectTrackedArgs oa);
+        public event LostTrackedObjectHandeler LostTrackedObject;
+        
+        #endregion
 
         /// <summary>
         /// Update all the targets
@@ -754,11 +776,21 @@ namespace Detector.Tracking
                 {
                     ObjectTracked new_obj = new ObjectTracked(_i++, new Point(t.X,t.Y),new Rectangle(t.SizeX,t.SizeY,0,0));
                     _objects_tracked.AddLast(new_obj);
+                    if (NewObjectTracked != null)
+                    {
+                        ObjectTrackedArgs args = new ObjectTrackedArgs(new_obj);
+                        NewObjectTracked(args);
+                    }
                 }
             }
             LinkedListNode<ObjectTracked> cur = _objects_tracked.First;
+            int bigest_id = 0;
             while (cur != null)
             {
+                // check _i and make it as small as possible
+                if (cur.Value.ID > bigest_id)
+                    bigest_id = cur.Value.ID;
+
                 int ms_ago = (int)(DateTime.Now - cur.Value.LastSeen).TotalMilliseconds;
                 if (ms_ago <= _miliseconds_unseen_till_removed)
                 {
@@ -767,6 +799,13 @@ namespace Detector.Tracking
                 }
                 else
                 {
+                    if (LostTrackedObject != null)
+                    {
+                        ObjectTrackedArgs args = new ObjectTrackedArgs(cur.Value);
+                        LostTrackedObject(args);
+                    }
+                    
+
                     LinkedListNode<ObjectTracked> last = cur;
                     cur = cur.Next;
                     _objects_tracked.Remove(last);
@@ -777,25 +816,8 @@ namespace Detector.Tracking
                     cur = cur.Next;
                 }
             }
-            /*
-            int i;
-            for(i =0;i<_objects_tracked.Count;i++)
-            {
-                ObjectTracked obj = _objects_tracked.ToArray()[i];
-                int ms_ago = (int)(DateTime.Now - obj.LastSeen).TotalMilliseconds;
-                if (ms_ago < _miliseconds_unseen_till_removed)
-                {
-                    yield return obj;
-                    count++;
-                }
-                else
-                {
-                    _objects_tracked.Remove(obj);
-                    i--; // acount for the one we just removed
-                }
-                i++;
-            }
-            */
+            _i = bigest_id+1;
+            
             if (count <= 0)
                 yield break;
         }
