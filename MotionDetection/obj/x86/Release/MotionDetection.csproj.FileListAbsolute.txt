@@ -10,3 +10,4 @@ C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Rele
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Release\MotionDetection.pdb
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Release\Detector.Motion.Form1.resources
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\obj\x86\Release\Detector.Motion.Motion.Properties.Resources.resources
+C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Release\MotionDetection.exe.config

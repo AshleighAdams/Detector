@@ -156,10 +156,10 @@ namespace Detector.Motion
             last_img.UnlockBits(lastimg);   // free it
 
             // Pixels now contain where there is movement in x,y
-            Target[] targs = new Target[10];
+            Target[] targs = new Target[40];
             int targ;
             int movement;
-            for (int y = 0; y < cur_img.Height; y++)    // yes this is messy, look above at the pesudo code for how and what this is doing
+            for (int y = 0; y < cur_img.Height; y+=2)    // yes this is messy, look above at the pesudo code for how and what this is doing
                 for (int x = 0; x < cur_img.Width; x++)
                 {
                     movement = pixels[x, y];
@@ -213,19 +213,8 @@ namespace Detector.Motion
         {
             try
             {
-                foreach (Target t in targs)
-                {
-                    if (t == null)
-                        break;
-                    if (                        // TODO: Add the end of the box check too
-                        t.X > x &&
-                        t.Y > y &&
-                        x < t.X + t.SizeX &&
-                        y < t.Y + t.SizeY)
-                    {
-                        return false;
-                    }
-                }
+                int res = InRangeOfTarget(ref targs, x, y);
+                return (res == -1);
             }
             catch (Exception ex)
             {
@@ -267,20 +256,17 @@ namespace Detector.Motion
                     if (t == null) // we should only get here if there were no targets matched
                         return -1;
                     // Check distance from cornders and that its not near the edge blah blah so on...
-                    if (Distance(x, y, t.X, t.Y) < _maxjoindistance ||                    // are we inrange of the other target?
-                        Distance(x, y, t.SizeX + t.X, t.SizeY + t.Y) < _maxjoindistance ||
-                        Distance(x, y, t.SizeX + t.X, t.Y) < _maxjoindistance ||
-                        Distance(x, y, t.X, t.SizeY + t.Y) < _maxjoindistance ||
-                            (
-                                x < t.X + t.SizeX + _maxjoindistance &&
-                                y < t.Y + t.SizeY + _maxjoindistance &&
-                                x > t.X - _maxjoindistance &&
-                                y > t.Y - _maxjoindistance
-                            )
-                        )
+                    int X = t.X - _maxjoindistance;
+                    int Y = t.Y - _maxjoindistance;
+                    int eX = X + t.SizeX + 2 * _maxjoindistance;
+                    int eY = Y + t.SizeY + 2 * _maxjoindistance;
+
+                    if (x > X && x < eX &&
+                        y > Y && y < eY)
                     {
                         return i;
                     }
+
                     i++;
                 }
             }
@@ -307,6 +293,15 @@ namespace Detector.Motion
         }
 
         // this function was used on the recursave algorithm but i changed from that to enable multipul tracking, new one is much better and this feater is here for if anyone wants it
+        /// <summary>
+        /// Gets the average color in a cerain area
+        /// </summary>
+        /// <param name="bdata">Bitmap data</param>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
+        /// <returns>Average greyscale color</returns>
         private unsafe int GetAverage(BitmapData bdata,int x, int y, int width, int height)
         {
             
@@ -362,7 +357,7 @@ namespace Detector.Motion
                 byte* row_last;
                 int R, G, B;
                 byte r, g, b, avg;
-                for (int y = 0; y < curimg.Height; y++)
+                for (int y = 0; y < curimg.Height; y+=2)
                     for (int x = 0; x < curimg.Width; x++)
                     {
                         row_current = (byte*)curimg.Scan0.ToPointer() + (curimg.Stride * y);
@@ -419,6 +414,9 @@ namespace Detector.Motion
                 this._Difference = value;
             }
         }
+        /// <summary>
+        /// White pixels represent areas to ignore motion
+        /// </summary>
         public Image IgnoreMotion
         {
             get
@@ -459,7 +457,9 @@ namespace Detector.Motion
                 _noisereduction = value;
             }
         }
-
+        /// <summary>
+        /// The maximum distance to join seperate targets together
+        /// </summary>
         public int MaxJoinDistance
         {
             get
@@ -509,15 +509,18 @@ namespace Detector.Motion
                 Error(ex.Message);
             }
         }
-        private int _noisereduction = 5;
-        private int _maxjoindistance = 15;
+        private int _noisereduction = 4;
+        private int _maxjoindistance = 10;
         private int _Difference = 50;
         private Image _last_img = null;
         private Image _cur_img = null;
         private byte[,] IgnoreMotionPixels;
         private Image _ignoremotion;
         #endregion
-
+        /// <summary>
+        /// Error without halting on release builds
+        /// </summary>
+        /// <param name="error">String for the exception</param>
         private void Error(string error)
         {
             #if DEBUG
@@ -531,6 +534,12 @@ namespace Detector.Tracking
 {
     public class ObjectTracked
     {
+        /// <summary>
+        /// Represents an object that is being tracked
+        /// </summary>
+        /// <param name="ID">The new ID of the object</param>
+        /// <param name="Pos">Position</param>
+        /// <param name="Size">Size</param>
         public ObjectTracked(int ID, Point Pos, Rectangle Size)
         {
             _Position = Pos;
@@ -665,7 +674,7 @@ namespace Detector.Tracking
         public int GetScore(Target t)  /////////// FINISH ME!
         {
             // 100 is MaxBadScoreDistance
-            float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X,_Position.Y) / 150); // score algo with max being 1 for all of them
+            float score_pos = 1 - Math.Min(1, Distance(t.X,t.Y,_Position.X+_Velocity.X,_Position.Y+_Velocity.Y) / 150); // score algo with max being 1 for all of them
             
             // 50 is MaxBadScoreVelocity
             float vel_x = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
@@ -707,7 +716,9 @@ namespace Detector.Tracking
         private int _ID;
         #endregion
     }
-
+    /// <summary>
+    /// Arguments to pass the object
+    /// </summary>
     public class ObjectTrackedArgs : System.EventArgs
     {
         private ObjectTracked obj;
@@ -726,6 +737,9 @@ namespace Detector.Tracking
 
     public class ObjectTracker
     {
+        /// <summary>
+        /// A wrapper for the motion detection algorithm for tracking the targets
+        /// </summary>
         public ObjectTracker()
         {
         }
@@ -915,22 +929,27 @@ namespace Detector.Helper
         /// <param name="height">Height of the box</param>
         /// <param name="bmp">The bitmap to draw to</param>
         /// <param name="col">Color to draw with</param>
-        public void DrawBox(int X, int Y, int width, int height, ref Bitmap bmp, Color col)
+        public void DrawBox(int X, int Y, int width, int height, ref Bitmap bmp, Color col, bool fill)
         {
             BitmapData bmp_data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            for (int x = X; x < X + width; x++)
+            if (!fill)
             {
-                if (x >= bmp.Width)
-                    break;
-                SetPixel(ref bmp_data, x, Y, col);
-                SetPixel(ref bmp_data, x, Math.Min(bmp.Height - 1, Y + height), col);
+                for (int x = X; x < X + width; x++)
+                {
+                    SetPixel(ref bmp_data, x, Y, col);
+                    SetPixel(ref bmp_data, x, Math.Min(bmp.Height - 1, Y + height), col);
+                }
+                for (int y = Y; y < Y + height; y++)
+                {
+                    SetPixel(ref bmp_data, X, y, col);
+                    SetPixel(ref bmp_data, Math.Min(bmp.Width - 1, X + width), y, col);
+                }
             }
-            for (int y = Y; y < Y + height; y++)
+            else
             {
-                if (y >= bmp.Height)
-                    break;
-                SetPixel(ref bmp_data, X, y, col);
-                SetPixel(ref bmp_data, Math.Min(bmp.Width - 1, X + width), y, col);
+                for (int x = X; x < X + width; x++)
+                    for (int y = Y; y < Y + height; y++)
+                        SetPixel(ref bmp_data, x, y, col);
             }
             bmp.UnlockBits(bmp_data);
         }
@@ -942,7 +961,7 @@ namespace Detector.Helper
         /// <param name="col">Color</param>
         public void DrawBox(Target t, ref Bitmap bmp, Color col)
         {
-            DrawBox(t.X, t.Y, t.SizeX, t.SizeY, ref bmp, col);
+            DrawBox(t.X, t.Y, t.SizeX, t.SizeY, ref bmp, col, false);
         }
         /// <summary>
         /// Draw a box around an object
@@ -952,7 +971,7 @@ namespace Detector.Helper
         /// <param name="col">Color</param>
         public void DrawBox(ObjectTracked obj, ref Bitmap bmp, Color col)
         {
-            DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
+            DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col, false);
         }
         /// <summary>
         /// Sets the pixel to a cetain color (Aplha works)
@@ -963,6 +982,8 @@ namespace Detector.Helper
         /// <param name="col">Color to draw with</param>
         public unsafe void SetPixel(ref BitmapData bmp, int x, int y, Color col)
         {
+            if (x >= bmp.Width || x <= 0 || y >= bmp.Height || y <= 0)
+                return;
             byte* row = (byte*)bmp.Scan0.ToPointer() + (bmp.Stride * y);
             int B = x * 3 + 0;
             int G = x * 3 + 1;

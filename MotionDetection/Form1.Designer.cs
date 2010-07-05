@@ -29,21 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.pbLast = new System.Windows.Forms.PictureBox();
             this.pbCurrent = new System.Windows.Forms.PictureBox();
             this.pbMotion = new System.Windows.Forms.PictureBox();
             this.tmrCheckMotion = new System.Windows.Forms.Timer(this.components);
-            this.btnStart = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnSource = new System.Windows.Forms.Button();
-            this.btnFormat = new System.Windows.Forms.Button();
-            this.btnContinue = new System.Windows.Forms.Button();
             this.cbOn = new System.Windows.Forms.CheckBox();
             this.tbSpeed = new System.Windows.Forms.TextBox();
             this.tbDifference = new System.Windows.Forms.TrackBar();
             this.pbIgnoreMotion = new System.Windows.Forms.PictureBox();
-            this.ofd = new System.Windows.Forms.OpenFileDialog();
             this.lblData = new System.Windows.Forms.Label();
             this.lbHistory = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).BeginInit();
@@ -55,7 +48,6 @@
             // 
             // pbLast
             // 
-            this.pbLast.Image = ((System.Drawing.Image)(resources.GetObject("pbLast.Image")));
             this.pbLast.Location = new System.Drawing.Point(12, 12);
             this.pbLast.Name = "pbLast";
             this.pbLast.Size = new System.Drawing.Size(170, 120);
@@ -65,7 +57,6 @@
             // 
             // pbCurrent
             // 
-            this.pbCurrent.Image = ((System.Drawing.Image)(resources.GetObject("pbCurrent.Image")));
             this.pbCurrent.Location = new System.Drawing.Point(12, 242);
             this.pbCurrent.Name = "pbCurrent";
             this.pbCurrent.Size = new System.Drawing.Size(346, 246);
@@ -86,60 +77,10 @@
             // 
             this.tmrCheckMotion.Tick += new System.EventHandler(this.tmrCheckMotion_Tick);
             // 
-            // btnStart
-            // 
-            this.btnStart.Location = new System.Drawing.Point(12, 138);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(75, 23);
-            this.btnStart.TabIndex = 6;
-            this.btnStart.Text = "Start";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(93, 138);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 23);
-            this.btnStop.TabIndex = 7;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // btnSource
-            // 
-            this.btnSource.Location = new System.Drawing.Point(174, 138);
-            this.btnSource.Name = "btnSource";
-            this.btnSource.Size = new System.Drawing.Size(75, 23);
-            this.btnSource.TabIndex = 8;
-            this.btnSource.Text = "Source";
-            this.btnSource.UseVisualStyleBackColor = true;
-            this.btnSource.Click += new System.EventHandler(this.btnSource_Click);
-            // 
-            // btnFormat
-            // 
-            this.btnFormat.Location = new System.Drawing.Point(255, 138);
-            this.btnFormat.Name = "btnFormat";
-            this.btnFormat.Size = new System.Drawing.Size(75, 23);
-            this.btnFormat.TabIndex = 9;
-            this.btnFormat.Text = "Format";
-            this.btnFormat.UseVisualStyleBackColor = true;
-            this.btnFormat.Click += new System.EventHandler(this.btnFormat_Click);
-            // 
-            // btnContinue
-            // 
-            this.btnContinue.Location = new System.Drawing.Point(12, 167);
-            this.btnContinue.Name = "btnContinue";
-            this.btnContinue.Size = new System.Drawing.Size(75, 23);
-            this.btnContinue.TabIndex = 10;
-            this.btnContinue.Text = "Continue";
-            this.btnContinue.UseVisualStyleBackColor = true;
-            this.btnContinue.Click += new System.EventHandler(this.btnContinue_Click);
-            // 
             // cbOn
             // 
             this.cbOn.AutoSize = true;
-            this.cbOn.Location = new System.Drawing.Point(93, 173);
+            this.cbOn.Location = new System.Drawing.Point(12, 161);
             this.cbOn.Name = "cbOn";
             this.cbOn.Size = new System.Drawing.Size(40, 17);
             this.cbOn.TabIndex = 11;
@@ -149,11 +90,11 @@
             // 
             // tbSpeed
             // 
-            this.tbSpeed.Location = new System.Drawing.Point(139, 171);
+            this.tbSpeed.Location = new System.Drawing.Point(139, 159);
             this.tbSpeed.Name = "tbSpeed";
             this.tbSpeed.Size = new System.Drawing.Size(43, 20);
             this.tbSpeed.TabIndex = 12;
-            this.tbSpeed.Text = "100";
+            this.tbSpeed.Text = "50";
             this.tbSpeed.Validating += new System.ComponentModel.CancelEventHandler(this.tbSpeed_Validating);
             // 
             // tbDifference
@@ -171,19 +112,15 @@
             // 
             // pbIgnoreMotion
             // 
-            this.pbIgnoreMotion.Image = ((System.Drawing.Image)(resources.GetObject("pbIgnoreMotion.Image")));
             this.pbIgnoreMotion.Location = new System.Drawing.Point(188, 12);
             this.pbIgnoreMotion.Name = "pbIgnoreMotion";
             this.pbIgnoreMotion.Size = new System.Drawing.Size(170, 120);
             this.pbIgnoreMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbIgnoreMotion.TabIndex = 16;
             this.pbIgnoreMotion.TabStop = false;
-            this.pbIgnoreMotion.Click += new System.EventHandler(this.pbIgnoreMotion_Click);
-            // 
-            // ofd
-            // 
-            this.ofd.FileName = "IgnoreMotionBitmap";
-            this.ofd.Filter = "BMP Files|*.bmp|All Files|*.*";
+            this.pbIgnoreMotion.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pbIgnoreMotion_MouseDoubleClick);
+            this.pbIgnoreMotion.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbIgnoreMotion_MouseDown);
+            this.pbIgnoreMotion.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbIgnoreMotion_MouseUp);
             // 
             // lblData
             // 
@@ -198,9 +135,9 @@
             // lbHistory
             // 
             this.lbHistory.FormattingEnabled = true;
-            this.lbHistory.Location = new System.Drawing.Point(188, 167);
+            this.lbHistory.Location = new System.Drawing.Point(188, 141);
             this.lbHistory.Name = "lbHistory";
-            this.lbHistory.Size = new System.Drawing.Size(170, 69);
+            this.lbHistory.Size = new System.Drawing.Size(170, 95);
             this.lbHistory.TabIndex = 18;
             // 
             // Form1
@@ -214,11 +151,6 @@
             this.Controls.Add(this.tbDifference);
             this.Controls.Add(this.tbSpeed);
             this.Controls.Add(this.cbOn);
-            this.Controls.Add(this.btnContinue);
-            this.Controls.Add(this.btnFormat);
-            this.Controls.Add(this.btnSource);
-            this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.btnStart);
             this.Controls.Add(this.pbMotion);
             this.Controls.Add(this.pbCurrent);
             this.Controls.Add(this.pbLast);
@@ -241,16 +173,10 @@
         private System.Windows.Forms.PictureBox pbCurrent;
         private System.Windows.Forms.PictureBox pbMotion;
         private System.Windows.Forms.Timer tmrCheckMotion;
-        private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnSource;
-        private System.Windows.Forms.Button btnFormat;
-        private System.Windows.Forms.Button btnContinue;
         private System.Windows.Forms.CheckBox cbOn;
         private System.Windows.Forms.TextBox tbSpeed;
         private System.Windows.Forms.TrackBar tbDifference;
         private System.Windows.Forms.PictureBox pbIgnoreMotion;
-        private System.Windows.Forms.OpenFileDialog ofd;
         private System.Windows.Forms.Label lblData;
         private System.Windows.Forms.ListBox lbHistory;
     }
