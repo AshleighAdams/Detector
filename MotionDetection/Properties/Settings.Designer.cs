@@ -22,5 +22,53 @@ namespace Detector.Motion.Motion.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public string CalSX {
+            get {
+                return ((string)(this["CalSX"]));
+            }
+            set {
+                this["CalSX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public string CalSY {
+            get {
+                return ((string)(this["CalSY"]));
+            }
+            set {
+                this["CalSY"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public string CalEX {
+            get {
+                return ((string)(this["CalEX"]));
+            }
+            set {
+                this["CalEX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public string CalEY {
+            get {
+                return ((string)(this["CalEY"]));
+            }
+            set {
+                this["CalEY"] = value;
+            }
+        }
     }
 }

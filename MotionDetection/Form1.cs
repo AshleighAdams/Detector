@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Detector.Tracking;
 using WebCam;
 using System.Drawing.Drawing2D;
+using System.IO.Ports;
 //using OpenCVDotNet;
 
 using Emgu.CV;
@@ -68,7 +69,7 @@ namespace Detector.Motion
 
         private void Form1_Load(object senderr, EventArgs ee)
         {
-
+            serial.Open();
             tracker.NewObjectTracked += delegate(ObjectTrackedArgs args)
             {
                 ObjectTracked obj = args.Object;
@@ -183,6 +184,8 @@ namespace Detector.Motion
             #region DrawTargets
             ObjectTracked[] objs = new List<ObjectTracked>(tracker.GetObjects()).ToArray();
             lable_data += "Tracking " + objs.Length.ToString() + " objects\n";
+            int count = 0;
+            ObjectTracked besttarget = null;
             foreach (ObjectTracked obj in objs)
             {
                 lable_data += "ID: " + obj.ID + "\n";
@@ -191,17 +194,46 @@ namespace Detector.Motion
                 col = cols[Math.Min(cols.Length - 1, obj.ID)];
                 if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
                     col = Color.FromArgb((int)a, 255, 0, 0);
-                
-
+                count++;
+                if (besttarget == null)
+                    besttarget = obj;
+                else
+                {
+                    if (Math.Abs(obj.Velocity.X) + Math.Abs(obj.Velocity.Y)
+                        >
+                        Math.Abs(besttarget.Velocity.X) + Math.Abs(besttarget.Velocity.Y))
+                    {
+                        besttarget = obj;
+                    }
+                }
                 helper.DrawBox(obj, ref bmp, col);
                 //helper.DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
             }
              #endregion
-            
+
+            #region MoveServo
+
+            if (besttarget != null)
+            {
+                double per_x = ((double)besttarget.Position.X / (double)bmp.Width);
+                double per_y = ((double)besttarget.Position.Y / (double)bmp.Height);
+
+                double pitch = Scale(per_y, 0, 1, MinY, MaxY);
+                double yaw = Scale(per_x, 0, 1, MinX, MaxX);
+
+                SetServoPos((int)yaw, (int)pitch);
+            }
+            #endregion
+
             double ms = ( DateTime.Now - start ).TotalMilliseconds;
             lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data;
            
             pbMotion.Image = bmp;
+            if (count > 0 && DateTime.Now.Millisecond > 900)
+            {
+                string file = "C:\\motiom\\" + DateTime.Now.DayOfWeek.ToString() + DateTime.Now.Hour.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Millisecond.ToString() + "_motion.jpg";
+                SaveBMP(bmp,file);
+            }
             //}
             //frames[0] = pbCurrent.Image;
 
@@ -252,7 +284,115 @@ namespace Detector.Motion
             pbIgnoreMotion.Image = pbCurrent.Image;
             detector.IgnoreMotion = pbCurrent.Image;
         }
+        private void SaveBMP(Bitmap bmp, string path) // now 'ref' parameter
+        {
+            try
+            {
+                //bmp.Save(path);
+            }
+            catch
+            {
+                /*Bitmap bitmap = new Bitmap(bmp.Width, bmp.Height, bmp.PixelFormat);
+                Graphics g = Graphics.FromImage(bitmap);
+                g.DrawImage(bmp, new Point(0, 0));
+                g.Dispose();
+                bmp.Dispose();
+                //bitmap.Save(path);
+                bmp = bitmap; // preserve clone */
+            }
+        }
+
+        public void SetServoPos(int Yaw, int Pitch)
+        {
+            byte[] DATA = new byte[2];
+            DATA[0] = (byte)Scale(Yaw, 0, 180, 0, 127);
+            DATA[1] = (byte)Scale(Pitch, 0, 180, 127, 255);
+            serial.Write(DATA, 0, DATA.Length);
+        }
+        /// <summary>
+        /// Scale a value between one set and the other
+        /// </summary>
+        /// <param name="value">The value you want to scale</param>
+        /// <param name="min1">This is its minimum value</param>
+        /// <param name="max1">This is its maximum value</param>
+        /// <param name="min2">The minimum you want</param>
+        /// <param name="max2">The maximum you want</param>
+        /// <returns>The scaled value</returns>
+        public double Scale(double value, double min1, double max1, double min2, double max2) // we can use my func to find the real servo pos and the servo pos from the pic
+        {
+            if (value < min1) value = min1;
+            if (value > max1) value = max1;
+            double VP = (value - min1) / (max1 - min1);
+            return ((max2 - min2) * VP + min2);
+        }
 
 
+
+        private double MinY = 60;
+        private double MaxY = 120;
+
+        private double MinX = 60;
+        private double MaxX = 120;
+
+        private void btnShowPorts_Click(object sender, EventArgs e)
+        {
+            string [] ports = SerialPort.GetPortNames();
+            string msg = "";
+
+            foreach (string port in ports)
+            {
+                msg += port + "\n";
+            }
+            MessageBox.Show(msg);
+        }
+
+        private void pbCurrent_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (cbManual.Checked)
+            {
+                double per_x = ((double)e.X / (double)pbCurrent.Width);
+                double per_y = ((double)e.Y / (double)pbCurrent.Height);
+
+                double pitch = Scale(per_y, 0, 1, MinY, MaxY);
+                double yaw = Scale(per_x, 0, 1, MinX, MaxX);
+
+                SetServoPos((int)yaw, (int)pitch);
+                System.Threading.Thread.Sleep(100);
+            }
+        }
+
+        private void trackBar4_Scroll(object sender, EventArgs e)
+        {
+            MaxX = tbMaxX.Value;
+            SetServoPos(tbMaxX.Value, tbMaxY.Value);
+        }
+
+        private void tbMinX_Scroll(object sender, EventArgs e)
+        {
+            MinX = tbMinX.Value;
+            SetServoPos(tbMinX.Value, tbMinY.Value);
+        }
+
+        private void tbMinY_Scroll(object sender, EventArgs e)
+        {
+            MinY = tbMinY.Value;
+            SetServoPos(tbMinX.Value, tbMinY.Value);
+        }
+
+        private void tbMaxY_Scroll(object sender, EventArgs e)
+        {
+            MaxY = tbMaxY.Value;
+            SetServoPos(tbMaxX.Value, tbMaxY.Value);
+        }
+
+        private void pbCurrent_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCalLoad_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

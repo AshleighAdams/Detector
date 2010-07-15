@@ -159,7 +159,7 @@ namespace Detector.Motion
             Target[] targs = new Target[40];
             int targ;
             int movement;
-            for (int y = 0; y < cur_img.Height; y+=2)    // yes this is messy, look above at the pesudo code for how and what this is doing
+            for (int y = 0; y < cur_img.Height; y++)    // yes this is messy, look above at the pesudo code for how and what this is doing
                 for (int x = 0; x < cur_img.Width; x++)
                 {
                     movement = pixels[x, y];
@@ -357,7 +357,7 @@ namespace Detector.Motion
                 byte* row_last;
                 int R, G, B;
                 byte r, g, b, avg;
-                for (int y = 0; y < curimg.Height; y+=2)
+                for (int y = 0; y < curimg.Height; y++)
                     for (int x = 0; x < curimg.Width; x++)
                     {
                         row_current = (byte*)curimg.Scan0.ToPointer() + (curimg.Stride * y);

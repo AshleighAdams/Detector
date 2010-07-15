@@ -1,0 +1,42 @@
+#include <Servo.h> 
+
+Servo servo_x;
+Servo servo_y;
+int pos_x;
+int last_pos;
+
+void setup() 
+{ 
+  servo_x.attach(9);
+  servo_y.attach(10);
+  servo_x.write(90);
+  servo_y.write(90);
+  Serial.begin(9600);
+} 
+
+void loop() 
+{ 
+  if (Serial.available() > 0)
+  {
+    int x = Serial.read();
+    int got=false;
+    if(x < 127) // this is the x value
+    {
+      got = true;
+      x = map(x, 0, 127, 0, 179);
+      servo_x.write(x);
+      delay(15);
+    }
+    if(x > 127 && !got) // we don't want to adust x and fuckup y now do we?
+    {
+      got = true;
+      x = map(x, 127, 255, 0, 179);
+      servo_y.write(x);
+      delay(15);
+    }
+    if(!got)
+    {
+      // fire
+    }
+  }
+} 
