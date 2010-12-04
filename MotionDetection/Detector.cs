@@ -193,13 +193,20 @@ namespace Detector.Motion
                         }
                     }
                 }
-
-                foreach (Target t in targs)
+            
+            foreach (Target t in targs)
+            {
+                if (t == null)
                 {
-                    if (t == null || t.SizeX < _noisereduction || t.SizeY < _noisereduction)
-                        break;
+                }else if (t.SizeX < _noisereduction || t.SizeY < _noisereduction)
+                { 
+                    _RemovedTargets = _RemovedTargets + 1;
+                }
+                else
+                {
                     yield return t;
                 }
+            }
         }
 
         /// <summary>
@@ -414,6 +421,14 @@ namespace Detector.Motion
                 this._Difference = value;
             }
         }
+        private int _RemovedTargets;
+        /// <summary>
+        /// Ammount of "small" targets have been removed
+        /// </summary>
+        public int RemovedTargets
+        {
+            get { return _RemovedTargets; }
+        }
         /// <summary>
         /// White pixels represent areas to ignore motion
         /// </summary>
@@ -439,6 +454,7 @@ namespace Detector.Motion
         {
             if (Last.Width != Current.Width || Last.Height != Current.Height)
                 Error("Image sizes differ");
+            _RemovedTargets = 0;
             _last_img = Last;
             _cur_img = Current;
         }
@@ -524,7 +540,7 @@ namespace Detector.Motion
         private void Error(string error)
         {
             #if DEBUG
-            throw new Exception(error);
+            //throw new Exception(error);
             #endif
         }
     }
@@ -534,15 +550,22 @@ namespace Detector.Tracking
 {
     public class ObjectTracked
     {
+        private Rectangle ImgSize;
         /// <summary>
         /// Represents an object that is being tracked
         /// </summary>
         /// <param name="ID">The new ID of the object</param>
         /// <param name="Pos">Position</param>
         /// <param name="Size">Size</param>
-        public ObjectTracked(int ID, Point Pos, Rectangle Size)
+        public ObjectTracked(int ID, Point Pos, Rectangle Size, Rectangle imgSize)
         {
             _Position = Pos;
+
+            PosX = (float)Pos.X / (float)imgSize.Width;
+            PosY = (float)Pos.Y / (float)imgSize.Height;
+            SizeX = (float)Size.X / (float)imgSize.Width;
+            SizeY = (float)Size.Y / (float)imgSize.Height;
+
             _Size = Size;
             _StartedTracking = DateTime.Now;
             _LastSeen = DateTime.Now;
@@ -550,6 +573,7 @@ namespace Detector.Tracking
             _LastPos = _Position;
             _LastSize = _Size;
             _ID = ID;
+            ImgSize = imgSize;
         }
 
         #region Properties
@@ -579,7 +603,7 @@ namespace Detector.Tracking
             }
         }
         /// <summary>
-        /// The position of the object (When set it automaticly updates velocity
+        /// The position of the object (When set it automaticly updates velocity)
         /// </summary>
         public Point Position
         {
@@ -591,13 +615,31 @@ namespace Detector.Tracking
             {
                 _LastPos = _Position;
                 _Position = value;
+                PosX = (float)_Position.X / (float)ImgSize.Width;
+                PosY = (float)_Position.Y / (float)ImgSize.Height;
                 _Velocity.X = _Position.X - _LastPos.X;
                 _Velocity.Y = _Position.Y - _LastPos.Y;
                 _LastSeen = DateTime.Now;
             }
         }
         /// <summary>
+        /// Percent across the image
+        /// </summary>
+        public float PosX;
+        /// <summary>
+        /// Percent across the image
+        /// </summary>
+        public float PosY;
+        /// <summary>
         /// The position it was at last
+        /// </summary>
+        public float SizeX;
+        /// <summary>
+        /// The size it was at last
+        /// </summary>
+        public float SizeY;
+        /// <summary>
+        /// The size it was at last
         /// </summary>
         public Point LastPos
         {
@@ -619,6 +661,8 @@ namespace Detector.Tracking
             {
                 _LastSize = _Size;
                 _Size = value;
+                SizeX = (float)_Size.X / (float)ImgSize.Width;
+                SizeY = (float)_Size.Y / (float)ImgSize.Height;
             }
         }
         /// <summary>
@@ -681,8 +725,8 @@ namespace Detector.Tracking
             float vel_y = 1 - Math.Min(1, Math.Abs(t.X - _Position.X) / 50);
 
             // 50 is MaxBadScoreSize
-            float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 50);
-            float size_y = 1 - Math.Min(1, Math.Abs(t.SizeY - _Size.Y) / 50);
+            float size_x = 1 - Math.Min(1, Math.Abs(t.SizeX - _Size.X) / 100);
+            float size_y = 1 - Math.Min(1, Math.Abs(t.SizeY - _Size.Y) / 100);
 
             float score_size = (size_x+size_y)/2;
             float score_vel = (vel_x+vel_y)/2;
@@ -763,6 +807,17 @@ namespace Detector.Tracking
             _targets = targs;
         }
 
+        public int FrameSizeX = 0;
+        public int FrameSizeY = 0;
+        /// <summary>
+        /// For % pos
+        /// </summary>
+        public void SetFrameSize(int x, int y)
+        {
+            FrameSizeX = x;
+            FrameSizeY = y;
+        }
+
         /// <summary>
         /// Get the tracked objects
         /// </summary>
@@ -792,7 +847,11 @@ namespace Detector.Tracking
                 }
                 else
                 {
-                    ObjectTracked new_obj = new ObjectTracked(_i++, new Point(t.X,t.Y),new Rectangle(t.SizeX,t.SizeY,0,0));
+                    ObjectTracked new_obj = new ObjectTracked(_i++,
+                        new Point(t.X,t.Y),
+                        new Rectangle(t.SizeX,t.SizeY,0,0),
+                        new Rectangle(0,0,FrameSizeX, FrameSizeY)
+                        );
                     _objects_tracked.AddLast(new_obj);
                     if (NewObjectTracked != null)
                     {

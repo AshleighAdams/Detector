@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using Detector.Motion;
 using System.Diagnostics;
 using Detector.Tracking;
-using WebCam;
 using System.Drawing.Drawing2D;
 using System.IO.Ports;
 //using OpenCVDotNet;
@@ -33,7 +32,7 @@ namespace Detector.Motion
     public partial class Form1 : Form
     {
         //CVCapture cam = new CVCapture();
-        Capture cam = new Capture(0);
+        Capture cam = new Capture(2);
        
         
         MotionDetector detector = new MotionDetector();
@@ -44,38 +43,37 @@ namespace Detector.Motion
             InitializeComponent();
         }
 
-        public Image<Gray, Byte> OptimizeBlobs(Image<Bgr, Byte> img)
-        {
-            // can improve image quality, but expensive if real-time capture
-            img._EqualizeHist();
-
-            // convert img to temporary HSV object
-            Image<Hsv, Byte> imgHSV = img.Convert<Hsv, Byte>();
-
-            // break down HSV
-            Image<Gray, Byte>[] channels = imgHSV.Split();
-            Image<Gray, Byte> imgHSV_saturation = channels[1];   // saturation channel
-            Image<Gray, Byte> imgHSV_value = channels[2];   // value channel
-
-            //use the saturation and value channel to filter noise. [you will need to tweak these values]
-            Image<Gray, Byte> saturationFilter = imgHSV_saturation.InRange(new Gray(0), new Gray(80));
-            Image<Gray, Byte> valueFilter = imgHSV_value.InRange(new Gray(200), new Gray(255));
-
-            // combine the filters to get the final image to process.
-            Image<Gray, byte> imgTarget = valueFilter.And(saturationFilter);
-
-            return imgTarget;
-        }
-
         private void Form1_Load(object senderr, EventArgs ee)
         {
-            serial.Open();
+            //serial.Open();
             tracker.NewObjectTracked += delegate(ObjectTrackedArgs args)
             {
                 ObjectTracked obj = args.Object;
                 lbHistory.Items.Add("Tacking: " + obj.ID.ToString() + " (" + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() + ":" + DateTime.Now.Second.ToString() + ")");
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, true);
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, false);
+
+                if (!cbSave.Checked)
+                    return;
+                Image<Bgr, byte> frame = cam.QueryFrame();
+                Bitmap img = frame.ToBitmap();
+
+                int x, y, w, h;
+                x = (int)(obj.PosX * img.Size.Width);
+                y = (int)(obj.PosY * img.Size.Height);
+
+                w = (int)(obj.SizeX * img.Size.Width);
+                h = (int)(obj.SizeY * img.Size.Height);
+
+                helper.DrawBox(x, y, w, h, ref img, Color.Red, false);
+
+                //"04/12/2010 03:14:46"
+                string date = DateTime.Now.ToString();
+                date = date.Replace("/", "-");
+                date = date.Replace(" ", "\\"); // date and time are seperated by a space, this will newfolder them
+                date = date.Replace(":", ".");
+
+                img.Save("C:\\Users\\C0BRA\\Documents\\My Dropbox\\Public\\Detection\\" + date + ".png", ImageFormat.Png);
             };
 
             tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
@@ -113,7 +111,8 @@ namespace Detector.Motion
 
 
         private Image[] frames = new Image[6];
-
+        private int[] AvgMisses = new int[10];
+        int AvgMisses_pos = 0;
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
             int N = 7;
@@ -130,9 +129,9 @@ namespace Detector.Motion
             //}
 
             Image<Bgr, byte> frame = cam.QuerySmallFrame();
-            
 
 
+            tracker.SetFrameSize(frame.Size.Width, frame.Size.Height);
 
             pbCurrent.Image = frame.ToBitmap();
 
@@ -226,14 +225,28 @@ namespace Detector.Motion
             #endregion
 
             double ms = ( DateTime.Now - start ).TotalMilliseconds;
-            lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data;
+            lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data + " Ammount of noise: " + detector.RemovedTargets.ToString();
            
             pbMotion.Image = bmp;
-            if (count > 0 && DateTime.Now.Millisecond > 900)
+
+            AvgMisses[AvgMisses_pos] = detector.RemovedTargets;
+            AvgMisses_pos = (AvgMisses_pos + 1) % AvgMisses.Length;
+
+            float avg = 0f;
+            if (cbAuto.Checked)
             {
-                string file = "C:\\motiom\\" + DateTime.Now.DayOfWeek.ToString() + DateTime.Now.Hour.ToString() + DateTime.Now.Second.ToString() + DateTime.Now.Millisecond.ToString() + "_motion.jpg";
-                SaveBMP(bmp,file);
+                foreach (int value in AvgMisses)
+                    avg += (float)value;
+                avg /= (float)AvgMisses.Length;
+
+                if (avg == 0)
+                    detector.Difference--;
+                else if (avg > 0.25)
+                    detector.Difference++;
+                tbDifference.Value = detector.Difference;
+                lblData.Text += " Avg Noise: " + avg.ToString("0.00");
             }
+
             //}
             //frames[0] = pbCurrent.Image;
 
@@ -307,7 +320,7 @@ namespace Detector.Motion
             byte[] DATA = new byte[2];
             DATA[0] = (byte)Scale(Yaw, 0, 180, 0, 127);
             DATA[1] = (byte)Scale(Pitch, 0, 180, 127, 255);
-            serial.Write(DATA, 0, DATA.Length);
+            //serial.Write(DATA, 0, DATA.Length);
         }
         /// <summary>
         /// Scale a value between one set and the other
@@ -393,6 +406,11 @@ namespace Detector.Motion
         private void btnCalLoad_Click(object sender, EventArgs e)
         {
             
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
