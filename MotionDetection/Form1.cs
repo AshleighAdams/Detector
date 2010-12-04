@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Detector.Tracking;
 using System.Drawing.Drawing2D;
 using System.IO.Ports;
+using System.IO;
 //using OpenCVDotNet;
 
 using Emgu.CV;
@@ -73,7 +74,14 @@ namespace Detector.Motion
                 date = date.Replace(" ", "\\"); // date and time are seperated by a space, this will newfolder them
                 date = date.Replace(":", ".");
 
-                img.Save("C:\\Users\\C0BRA\\Documents\\My Dropbox\\Public\\Detection\\" + date + ".png", ImageFormat.Png);
+                string folderDate = Path.GetDirectoryName(date);
+                string path = "C:\\Users\\C0BRA\\Documents\\My Dropbox\\Public\\Detection\\" + folderDate;
+                date = date.Replace(folderDate, "");
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                img.Save(path + date + ".png", ImageFormat.Png);
             };
 
             tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
