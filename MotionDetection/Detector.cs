@@ -117,7 +117,23 @@ namespace Detector.Motion
         /// </summary>
         public void DoNextScanLine(int x, int y, ref MotionHelper motion)
         {
-            if (motion.Motion[x, y] != 1) return;
+
+            //   2 3 4
+            // 2 O O O  
+            // 3 O X O  
+            // 4 O O O
+            if (motion.Motion[x, y] != 1)
+            {
+                // this is a bit of an extension, it allows it to bypass the 1 pixel limit you will always find, increases acuracey by over 50%
+                int count = 0;
+
+                for (int near_x = x - 1; near_x < x + 1; near_x++)
+                    for (int near_y = y - 1; near_y < y + 1; near_y++)
+                        if (motion.Motion[near_x, near_y] == 1)
+                            count++;
+                if (count == 0)
+                    return;
+            }
 
             if (x > motion.MaxX)
                 motion.MaxX = x;
