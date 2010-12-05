@@ -550,6 +550,34 @@ namespace Detector.Tracking
 {
     public class ObjectTracked
     {
+
+        public static bool operator ==(ObjectTracked obj1, ObjectTracked obj2)
+        {
+            if ((object)obj1 == null && (object)obj2 == null)
+                return true;
+            if ((object)obj1 == null || (object)obj2 == null)
+                return false;
+            return obj1.ID == obj2.ID;
+        }
+
+        public static bool operator !=(ObjectTracked obj1, ObjectTracked obj2)
+        {
+            if ((object)obj1 == null && (object)obj2 == null)
+                return false;
+            if ((object)obj1 == null || (object)obj2 == null)
+                return true;
+            return obj1.ID != obj2.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() ^ this.ID;
+        }
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
         private Rectangle ImgSize;
         /// <summary>
         /// Represents an object that is being tracked
@@ -795,6 +823,9 @@ namespace Detector.Tracking
 
         public delegate void LostTrackedObjectHandeler(ObjectTrackedArgs oa);
         public event LostTrackedObjectHandeler LostTrackedObject;
+
+        public delegate void UpdateTrackedObjectHandeler(ObjectTrackedArgs oa);
+        public event UpdateTrackedObjectHandeler UpdateTrackedObject;
         
         #endregion
 
@@ -830,7 +861,7 @@ namespace Detector.Tracking
                 int best_score = 0;     // does this object have a target to belong to? well find out with these vars for later checking
                 ObjectTracked best_scorer = null;
                 int score;
-                foreach (ObjectTracked obj in _objects_tracked)
+                foreach (ObjectTracked obj in ObjectsTracked)
                 {
                     score = obj.GetScore(t);
                     if (score > _min_score) // we will check if its more than the threshhold later
@@ -844,6 +875,8 @@ namespace Detector.Tracking
                     // woot we got the obj's target
                     best_scorer.Position = new Point(t.X, t.Y);
                     best_scorer.Size = new Rectangle(t.SizeX, t.SizeY, 0, 0);
+                    ObjectTrackedArgs args = new ObjectTrackedArgs(best_scorer);
+                    UpdateTrackedObject(args);
                 }
                 else
                 {
@@ -852,7 +885,7 @@ namespace Detector.Tracking
                         new Rectangle(t.SizeX,t.SizeY,0,0),
                         new Rectangle(0,0,FrameSizeX, FrameSizeY)
                         );
-                    _objects_tracked.AddLast(new_obj);
+                    ObjectsTracked.AddLast(new_obj);
                     if (NewObjectTracked != null)
                     {
                         ObjectTrackedArgs args = new ObjectTrackedArgs(new_obj);
@@ -860,7 +893,7 @@ namespace Detector.Tracking
                     }
                 }
             }
-            LinkedListNode<ObjectTracked> cur = _objects_tracked.First;
+            LinkedListNode<ObjectTracked> cur = ObjectsTracked.First;
             int bigest_id = 0;
             while (cur != null)
             {
@@ -885,7 +918,7 @@ namespace Detector.Tracking
 
                     LinkedListNode<ObjectTracked> last = cur;
                     cur = cur.Next;
-                    _objects_tracked.Remove(last);
+                    ObjectsTracked.Remove(last);
                 }
 
                 if (cur != null)
@@ -898,6 +931,8 @@ namespace Detector.Tracking
             if (count <= 0)
                 yield break;
         }
+
+        
 
         #region Properties
         /// <summary>
@@ -933,7 +968,7 @@ namespace Detector.Tracking
         private int _i;
         private int _miliseconds_unseen_till_removed = 3000;
         private Target[] _targets;
-        private LinkedList<ObjectTracked> _objects_tracked = new LinkedList<ObjectTracked>();
+        public LinkedList<ObjectTracked> ObjectsTracked = new LinkedList<ObjectTracked>();
     }
 }
 
@@ -993,12 +1028,12 @@ namespace Detector.Helper
             BitmapData bmp_data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             if (!fill)
             {
-                for (int x = X; x < X + width; x++)
+                for (int x = X + 1; x < X + width; x++)
                 {
                     SetPixel(ref bmp_data, x, Y, col);
                     SetPixel(ref bmp_data, x, Math.Min(bmp.Height - 1, Y + height), col);
                 }
-                for (int y = Y; y < Y + height; y++)
+                for (int y = Y; y < Y + height + 1; y++)
                 {
                     SetPixel(ref bmp_data, X, y, col);
                     SetPixel(ref bmp_data, Math.Min(bmp.Width - 1, X + width), y, col);

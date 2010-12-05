@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9B70CBE2-BAF8-4594-8CC5-D5A406A4289F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -51,6 +51,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Release\Emgu.Util.dll</HintPath>
     </Reference>
+    <Reference Include="Gif.Components, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Gif.Components.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -68,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationHandeler.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -20,3 +20,12 @@ C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\Em
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\Emgu.CV.ML.dll
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\Emgu.CV.UI.dll
 C:\Users\C0BRA\Documents\My Dropbox\MotionDetection\MotionDetection\bin\Debug\Emgu.Util.dll
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.exe.config
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.exe
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.pdb
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Motion.Form1.resources
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\Detector.Motion.Motion.Properties.Resources.resources
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\obj\x86\Debug\MotionDetection.csproj.GenerateResource.Cache
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.exe
+C:\Users\C0BRA\My Dropbox\MotionDetection\MotionDetection\bin\Debug\MotionDetection.pdb

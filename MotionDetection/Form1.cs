@@ -13,6 +13,8 @@ using Detector.Tracking;
 using System.Drawing.Drawing2D;
 using System.IO.Ports;
 using System.IO;
+using System.Threading;
+using Gif.Components;
 //using OpenCVDotNet;
 
 using Emgu.CV;
@@ -32,8 +34,10 @@ namespace Detector.Motion
 {
     public partial class Form1 : Form
     {
+        LinkedList<AnimationHandeler> trackingobjs = new LinkedList<AnimationHandeler>();
+        
         //CVCapture cam = new CVCapture();
-        Capture cam = new Capture(2);
+        Capture cam = new Capture(0);
        
         
         MotionDetector detector = new MotionDetector();
@@ -43,6 +47,69 @@ namespace Detector.Motion
         {
             InitializeComponent();
         }
+        private Bitmap GetImage(ref Bitmap frame, ObjectTracked obj)
+        {
+            Bitmap img = new Bitmap(frame);
+            DateTime now = DateTime.Now;
+            string str = now.TimeOfDay.ToString();
+
+            Graphics gfx = Graphics.FromImage(img);
+            Font fnt = new Font(FontFamily.GenericMonospace, 10f);
+            gfx.DrawString(str, fnt, Brushes.Red, new PointF(1f, 
+                    img.Height - fnt.Height - 2f
+                ));
+            
+            
+
+            int x, y, w, h;
+            x = (int)(obj.PosX * img.Size.Width);
+            y = (int)(obj.PosY * img.Size.Height);
+
+            w = (int)(obj.SizeX * img.Size.Width);
+            h = (int)(obj.SizeY * img.Size.Height);
+
+            helper.DrawBox(x, y, w, h, ref img, Color.Red, false);
+
+            return img;
+        }
+        private string GetFile(ObjectTracked obj)
+        {
+            string date = DateTime.Now.ToString();
+            date = date.Replace("/", "-");
+            date = date.Replace(" ", "\\"); // date and time are seperated by a space, this will newfolder them
+            date = date.Replace(":", ".");
+
+            string folderDate = Path.GetDirectoryName(date);
+            string path = "C:\\Users\\C0BRA\\Documents\\My Dropbox\\Public\\Detection\\" + folderDate;
+            date = date.Replace(folderDate, "");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path + date + " ID " + obj.ID.ToString() + ".gif";
+        }
+
+        private void SaveImageThread(AnimationHandeler hand, bool removeAndReturn)
+        {
+            if (removeAndReturn)
+            {
+                trackingobjs.Remove(hand);
+                return;
+            }
+            string FileName = GetFile(hand.Obj);
+            AnimatedGifEncoder gif = new AnimatedGifEncoder();
+            gif.Start(FileName);
+            gif.SetDelay(50);
+            gif.SetRepeat(0);
+
+            foreach (Bitmap bmp in hand.bitmaps)
+                gif.AddFrame(bmp);
+
+            gif.Finish();
+            trackingobjs.Remove(hand);
+        }
+
+        private Bitmap HiResFrame;
 
         private void Form1_Load(object senderr, EventArgs ee)
         {
@@ -54,34 +121,22 @@ namespace Detector.Motion
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, true);
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, false);
 
-                if (!cbSave.Checked)
-                    return;
-                Image<Bgr, byte> frame = cam.QueryFrame();
-                Bitmap img = frame.ToBitmap();
-
-                int x, y, w, h;
-                x = (int)(obj.PosX * img.Size.Width);
-                y = (int)(obj.PosY * img.Size.Height);
-
-                w = (int)(obj.SizeX * img.Size.Width);
-                h = (int)(obj.SizeY * img.Size.Height);
-
-                helper.DrawBox(x, y, w, h, ref img, Color.Red, false);
-
+                trackingobjs.AddLast(new AnimationHandeler(obj));
+                
                 //"04/12/2010 03:14:46"
-                string date = DateTime.Now.ToString();
-                date = date.Replace("/", "-");
-                date = date.Replace(" ", "\\"); // date and time are seperated by a space, this will newfolder them
-                date = date.Replace(":", ".");
+                
+            };
 
-                string folderDate = Path.GetDirectoryName(date);
-                string path = "C:\\Users\\C0BRA\\Documents\\My Dropbox\\Public\\Detection\\" + folderDate;
-                date = date.Replace(folderDate, "");
-
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
-                img.Save(path + date + ".png", ImageFormat.Png);
+            tracker.UpdateTrackedObject += delegate(ObjectTrackedArgs args)
+            {
+                Bitmap img = new Bitmap(HiResFrame);
+                
+                foreach(AnimationHandeler hand in trackingobjs)
+                    if(hand.Obj == args.Object)
+                    {
+                        hand.bitmaps.AddLast(GetImage(ref img, args.Object));
+                        break;
+                    }
             };
 
             tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
@@ -90,14 +145,38 @@ namespace Detector.Motion
                 lbHistory.Items.Add("Lost: " + obj.ID.ToString() + " (" + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() + ":" + DateTime.Now.Second.ToString() + ")");
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, true);
                 lbHistory.SetSelected(lbHistory.Items.Count - 1, false);
+                bool removeAndReturn = false;
+                if (!cbSave.Checked)
+                {
+                    trackingobjs.Remove(new AnimationHandeler(obj));
+                    removeAndReturn = true;
+                }
+                
+                TimeSpan ts = (DateTime.Now - obj.LastSeen) - obj.LifeTime;
+                int ms = (int)Math.Abs(ts.TotalMilliseconds);
+                this.Text = ms.ToString();
+                if (ms < 200) // this must be a mistake
+                {
+                    trackingobjs.Remove(new AnimationHandeler(obj));
+                    removeAndReturn = true;
+                }
+
+                foreach (AnimationHandeler hand in trackingobjs)
+                    if (hand.Obj == args.Object)
+                    {
+                        Thread thrd = new Thread(delegate()
+                            {
+                                SaveImageThread(hand, removeAndReturn);
+                            });
+                        thrd.Start();
+                        //SaveImageThread(hand, removeAndReturn);
+                        break;
+                    }
+
+                
             };
             
 
-        }
-
-        void tracker_NewObjectTracked(ObjectTrackedArgs oa)
-        {
-            throw new NotImplementedException();
         }
 
         private void cbOn_CheckedChanged(object sender, EventArgs e)
@@ -119,14 +198,12 @@ namespace Detector.Motion
 
 
         private Image[] frames = new Image[6];
-        private int[] AvgMisses = new int[10];
+        private int[] AvgMisses = new int[50];
         int AvgMisses_pos = 0;
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
             int N = 7;
             int aperature_size = N;
-            double lowThresh = 50;
-            double highThresh = 255;
 
             //CVImage cv_out;
             DateTime start = DateTime.Now;
@@ -137,7 +214,7 @@ namespace Detector.Motion
             //}
 
             Image<Bgr, byte> frame = cam.QuerySmallFrame();
-
+            HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(frame.Size.Width, frame.Size.Height);
 
@@ -197,6 +274,7 @@ namespace Detector.Motion
             {
                 lable_data += "ID: " + obj.ID + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
+                a = Math.Min(255, Math.Max(0, a));
                 Color col;
                 col = cols[Math.Min(cols.Length - 1, obj.ID)];
                 if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
@@ -241,7 +319,7 @@ namespace Detector.Motion
             AvgMisses_pos = (AvgMisses_pos + 1) % AvgMisses.Length;
 
             float avg = 0f;
-            if (cbAuto.Checked)
+            if (cbAuto.Checked && tracker.ObjectsTracked.Count == 0)
             {
                 foreach (int value in AvgMisses)
                     avg += (float)value;
@@ -249,18 +327,12 @@ namespace Detector.Motion
 
                 if (avg == 0)
                     detector.Difference--;
-                else if (avg > 0.25)
+                else if (avg > 0.15)
                     detector.Difference++;
-                tbDifference.Value = detector.Difference;
+                tbDifference.Value = Math.Max(1, Math.Min(159, detector.Difference));
                 lblData.Text += " Avg Noise: " + avg.ToString("0.00");
             }
 
-            //}
-            //frames[0] = pbCurrent.Image;
-
-            //for (int i = frames.Length - 2; i > -1; i--)
-            //    frames[i + 1] = frames[i];
-            //pbLast.Image = frames[frames.Length - 1];
         }
 
         private void tbDifference_Scroll(object sender, EventArgs e)
