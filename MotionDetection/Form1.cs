@@ -97,16 +97,20 @@ namespace Detector.Motion
                 return;
             }
             string FileName = GetFile(hand.Obj);
+
+            Bitmap[] bmps = hand.bitmaps.ToArray<Bitmap>();
+            trackingobjs.Remove(hand);
             AnimatedGifEncoder gif = new AnimatedGifEncoder();
+
             gif.Start(FileName);
             gif.SetDelay(50);
             gif.SetRepeat(0);
-
-            foreach (Bitmap bmp in hand.bitmaps)
+            
+            foreach (Bitmap bmp in bmps)
                 gif.AddFrame(bmp);
 
             gif.Finish();
-            trackingobjs.Remove(hand);
+            
         }
 
         private Bitmap HiResFrame;
