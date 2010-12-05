@@ -90,11 +90,114 @@ namespace Detector.Motion
         private int _size_y = 0;
     }
 
+    public class MotionHelper
+    {
+        public int Height, Width;
+        public int MinX, MinY, MaxX, MaxY;
+        public byte[,] Motion;
+        public MotionHelper(byte[,] motion, int width, int height, int seedx, int seedy)
+        {
+            Height = height;
+            Width = width;
+            Motion = motion;
+            MinX = seedx;
+            MaxX = seedx;
+            MinY = seedy;
+            MaxY = seedy;
+        }
+    }
+
     /// <summary>
     /// The engine in which detects the motion and put it in an easy to use format
     /// </summary>
     public class MotionDetector
     {
+        /// <summary>
+        /// Recursave function for scanlines
+        /// </summary>
+        public void DoNextScanLine(int x, int y, ref MotionHelper motion)
+        {
+            if (motion.Motion[x, y] != 1) return;
+
+            if (x > motion.MaxX)
+                motion.MaxX = x;
+            if (x < motion.MinX)
+                motion.MinX = x;
+            if (y > motion.MaxY)
+                motion.MaxY = y;
+            if (y < motion.MinY)
+                motion.MinY = y;
+
+            int y1;
+
+            //draw current scanline from start position to the top
+            y1 = y;
+            while (y1 < motion.Height && motion.Motion[x, y1] == 1)
+            {
+                motion.Motion[x, y1] = 0;
+                y1++;
+            }
+
+            //draw current scanline from start position to the bottom
+            y1 = y - 1;
+            while (y1 >= 0 && motion.Motion[x, y1] == 1)
+            {
+                motion.Motion[x, y1] = 0;
+                y1--;
+            }
+
+            //test for new scanlines to the left
+            y1 = y;
+            while (y1 < motion.Height && motion.Motion[x, y1] == 0)
+            {
+                if (x > 0 && motion.Motion[x - 1, y1] == 1)
+                {
+                    DoNextScanLine(x - 1, y1, ref motion);
+                }
+                y1++;
+            }
+            y1 = y - 1;
+            while (y1 >= 0 && motion.Motion[x, y1] == 0)
+            {
+                if (x > 0 && motion.Motion[x - 1, y1] == 1)
+                {
+                    DoNextScanLine(x - 1, y1, ref motion);
+                }
+                y1--;
+            }
+
+            //test for new scanlines to the right 
+            y1 = y;
+            while (y1 < motion.Height && motion.Motion[x, y1] == 0)
+            {
+                if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
+                {
+                    DoNextScanLine(x + 1, y1, ref motion);
+                }
+                y1++;
+            }
+            y1 = y - 1;
+            while (y1 >= 0 && motion.Motion[x, y1] == 0)
+            {
+                if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
+                {
+                    DoNextScanLine(x + 1, y1, ref motion);
+                }
+                y1--;
+            }
+        }
+
+        /// <summary>
+        /// Uses a FloodFill scanline algorithm to get a targets bounds
+        /// </summary>
+        public MotionHelper GetBoundsFromMotion(ref byte[,] motion, Point size, Point seed)
+        {
+            MotionHelper helper = new MotionHelper(motion, size.X, size.Y, seed.X, seed.Y);
+            DoNextScanLine(seed.X, seed.Y, ref helper);
+
+            return helper; 
+        }
+
         /// <summary>
         /// Compare to images to one another
         /// </summary>
@@ -123,10 +226,9 @@ namespace Detector.Motion
          * Get motion into new image motion
          * for each x and y do
          *      does the current pixel contain motion
-         *          are we not in range of another target
+         *          plant a seed and get target size
+         *          is it in the middle of another target? if not
          *              create a new target
-         *          else
-         *              if required expand the target X/Y/SizeX/SizeY
          *          end
          *      end
          * end
@@ -137,8 +239,10 @@ namespace Detector.Motion
          * end
          */
         #endregion
+        private int J = 0;
         public IEnumerable<Target> GetTargets()
         {
+            J = 0;
             Bitmap cur_img = new Bitmap(_cur_img);
             Bitmap last_img = new Bitmap(_last_img);
             // Data will be copied into here for each X and Y
@@ -165,32 +269,13 @@ namespace Detector.Motion
                     movement = pixels[x, y];
                     if (movement == 1)
                     {
-                        targ = InRangeOfTarget(ref targs, x, y);
-                        if (targ == -1)
-                        {
-                            if (NotInsideOfTarget(ref targs, x, y))
-                            {
-                                for (int j = 0; j < targs.Length; j++)
-                                {
-                                    if (targs[j] == null)
-                                    {
-                                        targs[j] = new Target(x, y, 1, 1);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (x < targs[targ].X)
-                                targs[targ].X = x;
-                            if (y < targs[targ].Y)
-                                targs[targ].Y = y;
-                            if (x > targs[targ].SizeX + targs[targ].X)
-                                targs[targ].SizeX = x - targs[targ].X;
-                            if (y > targs[targ].SizeY + targs[targ].Y)
-                                targs[targ].SizeY = y - targs[targ].Y;
-                        }
+                        MotionHelper helper = this.GetBoundsFromMotion(ref pixels,
+                            new Point(motion.Width, motion.Height),
+                            new Point(x, y));
+                        J++;
+                        targs[J] = new Target(helper.MinX, helper.MinY,
+                            helper.MaxX - helper.MinX,
+                            helper.MaxY - helper.MinY);
                     }
                 }
             

@@ -38,7 +38,7 @@ namespace Detector.Motion
         
         //CVCapture cam = new CVCapture();
         Capture cam = new Capture(0);
-       
+        
         
         MotionDetector detector = new MotionDetector();
         ObjectTracker tracker = new ObjectTracker();
@@ -46,6 +46,10 @@ namespace Detector.Motion
         public Form1()
         {
             InitializeComponent();
+            //cam.SetCaptureProperty(CAP_PROP.CV_CAP_PROP_FRAME_HEIGHT, 480);
+            //cam.SetCaptureProperty(CAP_PROP.CV_CAP_PROP_FRAME_WIDTH, 640);
+            
+            
         }
         private Bitmap GetImage(ref Bitmap frame, ObjectTracked obj)
         {
@@ -206,9 +210,22 @@ namespace Detector.Motion
         int AvgMisses_pos = 0;
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
+
+            /*
+            byte[,] fakeimg = new byte[40, 40];
+            fakeimg[2, 2] = 1;
+            for (int x = 5; x < 30; x++)
+                for (int y = 20; y < 35; y++)
+                    fakeimg[x, y] = 1;
+
+            detector.GetBoundsFromMotion(ref fakeimg,
+                new Point(40, 40),
+                new Point(6, 20));
+            return;*/
+
             int N = 7;
             int aperature_size = N;
-
+            
             //CVImage cv_out;
             DateTime start = DateTime.Now;
             //using (CVImage nextframe = cam.QueryFrame())
@@ -218,6 +235,7 @@ namespace Detector.Motion
             //}
 
             Image<Bgr, byte> frame = cam.QuerySmallFrame();
+            
             HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(frame.Size.Width, frame.Size.Height);
@@ -496,5 +514,7 @@ namespace Detector.Motion
         {
 
         }
+
+
     }
 }
