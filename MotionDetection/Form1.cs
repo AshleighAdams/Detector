@@ -37,7 +37,7 @@ namespace Detector.Motion
         LinkedList<AnimationHandeler> trackingobjs = new LinkedList<AnimationHandeler>();
         
         //CVCapture cam = new CVCapture();
-        //Capture cam = new Capture(0);
+        Capture cam = new Capture(0);
         
         
         MotionDetector detector = new MotionDetector();
@@ -137,14 +137,14 @@ namespace Detector.Motion
 
             tracker.UpdateTrackedObject += delegate(ObjectTrackedArgs args)
             {
-                /*Bitmap img = new Bitmap(HiResFrame);
+                Bitmap img = new Bitmap(HiResFrame);
                 
                 foreach(AnimationHandeler hand in trackingobjs)
                     if(hand.Obj == args.Object)
                     {
                         hand.bitmaps.AddLast(GetImage(ref img, args.Object));
                         break;
-                    }*/
+                    }
             };
 
             tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
@@ -183,13 +183,13 @@ namespace Detector.Motion
 
                 
             };
-            
 
+            //detector.Difference = 20;
         }
 
         private void cbOn_CheckedChanged(object sender, EventArgs e)
         {
-            //pbLast.Image = pbCurrent.Image;
+            pbLast.Image = pbCurrent.Image;
             tmrCheckMotion.Enabled = cbOn.Checked;
             detector.IgnoreMotion = pbIgnoreMotion.Image;
         }
@@ -223,16 +223,16 @@ namespace Detector.Motion
                 //pbCurrent.Image = nextframe.ToBitmap();
             //}
 
-            //Image<Bgr, byte> frame = cam.QuerySmallFrame();
+            Image<Bgr, byte> frame = cam.QuerySmallFrame();
 
-            //HiResFrame = cam.QueryFrame().ToBitmap();
+            HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(pbCurrent.Width, pbCurrent.Height);
 
-            //pbCurrent.Image = frame.ToBitmap();
+            pbCurrent.Image = frame.ToBitmap();
 
-            //if (pbCurrent.Image == null || pbLast.Image == null)
-            //    return;
+            if (pbCurrent.Image == null || pbLast.Image == null)
+                return;
             
             Color[] cols = {
                                Color.Blue,
@@ -250,7 +250,7 @@ namespace Detector.Motion
             Bitmap blur = new Bitmap(pbLast.Image);
             Bitmap __cur = new Bitmap(pbCurrent.Image);
             helper.MotionBlur(ref blur, ref __cur, 40);
-            //pbLast.Image = blur;
+            pbLast.Image = blur;
 
             Bitmap cur_img = new Bitmap(pbCurrent.Image);
             //if (frames[frames.Length - 1] != null)
@@ -280,7 +280,7 @@ namespace Detector.Motion
             ObjectTracked besttarget = null;
             foreach (ObjectTracked obj in objs)
             {
-                lable_data += "ID: " + obj.ID + "\n";
+                lable_data += "ID: " + obj.ID + " OJR: " + obj.ObjectRecogForwads.ToString() + ":" + obj.ObjectRecogLefts.ToString() + ":" + obj.ObjectRecogRights.ToString() + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
                 a = Math.Min(255, Math.Max(0, a));
                 Color col;

@@ -107,8 +107,8 @@ namespace Detector.Motion
 
             int startx = 0;
             int starty = this.SizeY / 2;
-
-            for (int findx = 0; findx < Shape.Length / 2; findx++)
+            
+            for (int findx = 0; findx < this.SizeX; findx++)
                 if (Shape[findx, starty] == 1)
                 {
                     startx = findx - 1;
@@ -117,7 +117,7 @@ namespace Detector.Motion
 
             PathDirection dir = new PathDirection(startx, starty);
             dir.CurrentAngle = 0; // up = 0, right = 90, left = - 90
-
+            int flips_inarow = 0;
             while (true)
             {
                 PathDirection right = dir.Angle(90);
@@ -126,24 +126,28 @@ namespace Detector.Motion
                 if (Shape[right.X, right.Y] == 0)
                 {
                     dir.Move(90);
-                    
+                    flips_inarow = 0;
                     rights++;
                 }
                 else if (Shape[forward.X, forward.Y] == 0)
                 {
                     dir.Move(0);
+                    flips_inarow = 0;
                     fwd++;
                 }
                 else if (Shape[left.X, left.Y] == 0)
                 {
                     dir.Move(-90);
-                    
+                    flips_inarow = 0;
                     lefts++;
                 }
                 else
                 {
                     dir.CurrentAngle *= -1;// flips its angle, rotation by 180
                     lefts += 2; // equilivent to 2 lefts
+                    flips_inarow++;
+                    if (flips_inarow > 5)
+                        break;
                 }
 
                 if (dir.X == startx && dir.Y == starty)
@@ -152,6 +156,7 @@ namespace Detector.Motion
             Left = lefts;
             Right = rights;
             Forward = fwd;
+            #region PEUSUDO CODE
             //algorithm des.
             /*direction = up
              *while not reached start point
@@ -166,7 +171,7 @@ namespace Detector.Motion
              *end
              * 
             */
-
+            #endregion
         }
 
         #region Properties
@@ -348,7 +353,7 @@ namespace Detector.Motion
                         helper.Shape[x - helper.MinX + 2, y - helper.MinY + 2] = 1;
                     }
 
-                    return helper; 
+            return helper; 
         }
 
         /// <summary>
@@ -971,6 +976,10 @@ namespace Detector.Tracking
             }
         }
 
+        public int ObjectRecogLefts = 0;
+        public int ObjectRecogRights = 0;
+        public int ObjectRecogForwads = 0;
+
         /// <summary>
         /// Get the score of the target to check if it is the correct one
         /// </summary>
@@ -1106,6 +1115,10 @@ namespace Detector.Tracking
                 if (best_score > _min_score)
                 {
                     // woot we got the obj's target
+                    best_scorer.ObjectRecogForwads = t.Forward;
+                    best_scorer.ObjectRecogLefts = t.Left;
+                    best_scorer.ObjectRecogRights = t.Right;
+
                     best_scorer.Position = new Point(t.X, t.Y);
                     best_scorer.Size = new Rectangle(t.SizeX, t.SizeY, 0, 0);
                     ObjectTrackedArgs args = new ObjectTrackedArgs(best_scorer);
@@ -1118,6 +1131,9 @@ namespace Detector.Tracking
                         new Rectangle(t.SizeX,t.SizeY,0,0),
                         new Rectangle(0,0,FrameSizeX, FrameSizeY)
                         );
+                    new_obj.ObjectRecogForwads = t.Forward;
+                    new_obj.ObjectRecogLefts = t.Left;
+                    new_obj.ObjectRecogRights = t.Right;
                     ObjectsTracked.AddLast(new_obj);
                     if (NewObjectTracked != null)
                     {
