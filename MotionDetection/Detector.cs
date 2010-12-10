@@ -126,11 +126,11 @@ namespace Detector.Motion
             {
                 // this is a bit of an extension, it allows it to bypass the 1 pixel limit you will always find, increases acuracey by over 50%
                 int count = 0;
-
+                /*
                 for (int near_x = x - 1; near_x < x + 1; near_x++)
                     for (int near_y = y - 1; near_y < y + 1; near_y++)
                         if (motion.Motion[near_x, near_y] == 1)
-                            count++;
+                            count++;*/
                 if (count == 0)
                     return;
             }
@@ -163,8 +163,8 @@ namespace Detector.Motion
             }
 
             //test for new scanlines to the left
-            y1 = y;
-            while (y1 < motion.Height && motion.Motion[x, y1] == 0)
+            y1 = y + 1;
+            while (y1 < motion.Height && motion.Motion[x - 1, y1] == 1)
             {
                 if (x > 0 && motion.Motion[x - 1, y1] == 1)
                 {
@@ -173,7 +173,7 @@ namespace Detector.Motion
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x, y1] == 0)
+            while (y1 >= 0 && motion.Motion[x - 1, y1] == 1)
             {
                 if (x > 0 && motion.Motion[x - 1, y1] == 1)
                 {
@@ -183,8 +183,8 @@ namespace Detector.Motion
             }
 
             //test for new scanlines to the right 
-            y1 = y;
-            while (y1 < motion.Height && motion.Motion[x, y1] == 0)
+            y1 = y + 1;
+            while (y1 < motion.Height && motion.Motion[x + 1, y1] == 1)
             {
                 if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
                 {
@@ -193,7 +193,7 @@ namespace Detector.Motion
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x, y1] == 0)
+            while (y1 >= 0 && motion.Motion[x + 1, y1] == 1)
             {
                 if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
                 {
@@ -231,7 +231,7 @@ namespace Detector.Motion
         {
             
         }
-
+        public Bitmap motionpic;
         // This is the main part of the algorithm, I supplied some pesudo code to help you understand it
         /// <summary>
         /// Get the current target
@@ -255,10 +255,10 @@ namespace Detector.Motion
          * end
          */
         #endregion
-        private int J = 0;
+        
         public IEnumerable<Target> GetTargets()
         {
-            J = 0;
+            
             Bitmap cur_img = new Bitmap(_cur_img);
             Bitmap last_img = new Bitmap(_last_img);
             // Data will be copied into here for each X and Y
@@ -274,9 +274,9 @@ namespace Detector.Motion
             Bitmap motion = cur_img;    // derive motion from the image that will be used for the motion pixels then copy the data into it
             motion.UnlockBits(SubtractPixels(curimg, lastimg, ref pixels));
             last_img.UnlockBits(lastimg);   // free it
-
+            motionpic = motion;
             // Pixels now contain where there is movement in x,y
-            
+            LinkedList<Target> targs = new LinkedList<Target>();
             for (int y = 0; y < cur_img.Height; y++)    // yes this is messy, look above at the pesudo code for how and what this is doing
                 for (int x = 0; x < cur_img.Width; x++)
                 {
@@ -286,18 +286,19 @@ namespace Detector.Motion
                         MotionHelper helper = this.GetBoundsFromMotion(ref pixels,
                             new Point(motion.Width, motion.Height),
                             new Point(x, y));
-                        J++;
+                        
                         Target newtarg = new Target(helper.MinX, helper.MinY,
                             helper.MaxX - helper.MinX,
                             helper.MaxY - helper.MinY);
                         float scalex = newtarg.SizeX / _noisereduction;
                         float scaley = newtarg.SizeY / _noisereduction;
                         if (scalex + scaley > 1.75f)
-                            yield return newtarg;
+                            targs.AddLast(newtarg);
                         else
                             _BadTargets++;
                     }
                 }
+            return targs;
         }
 
         /// <summary>

@@ -71,6 +71,7 @@
             // 
             // pbLast
             // 
+            this.pbLast.Image = global::Detector.Motion.Motion.Properties.Resources._1;
             this.pbLast.Location = new System.Drawing.Point(16, 9);
             this.pbLast.Margin = new System.Windows.Forms.Padding(4);
             this.pbLast.Name = "pbLast";
@@ -81,6 +82,7 @@
             // 
             // pbCurrent
             // 
+            this.pbCurrent.Image = global::Detector.Motion.Motion.Properties.Resources._2;
             this.pbCurrent.Location = new System.Drawing.Point(16, 298);
             this.pbCurrent.Margin = new System.Windows.Forms.Padding(4);
             this.pbCurrent.Name = "pbCurrent";

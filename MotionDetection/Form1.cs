@@ -189,7 +189,7 @@ namespace Detector.Motion
 
         private void cbOn_CheckedChanged(object sender, EventArgs e)
         {
-            pbLast.Image = pbCurrent.Image;
+            //pbLast.Image = pbCurrent.Image;
             tmrCheckMotion.Enabled = cbOn.Checked;
             detector.IgnoreMotion = pbIgnoreMotion.Image;
         }
@@ -211,18 +211,7 @@ namespace Detector.Motion
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
 
-            /*
-            byte[,] fakeimg = new byte[40, 40];
-            fakeimg[2, 2] = 1;
-            for (int x = 5; x < 30; x++)
-                for (int y = 20; y < 35; y++)
-                    fakeimg[x, y] = 1;
-
-            detector.GetBoundsFromMotion(ref fakeimg,
-                new Point(40, 40),
-                new Point(6, 20));
-            return;*/
-
+            
             int N = 7;
             int aperature_size = N;
             
@@ -235,12 +224,12 @@ namespace Detector.Motion
             //}
 
             Image<Bgr, byte> frame = cam.QuerySmallFrame();
-            
+
             HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(frame.Size.Width, frame.Size.Height);
 
-            pbCurrent.Image = frame.ToBitmap();
+            //pbCurrent.Image = frame.ToBitmap();
 
             if (pbCurrent.Image == null || pbLast.Image == null)
                 return;
@@ -261,7 +250,7 @@ namespace Detector.Motion
             Bitmap blur = new Bitmap(pbLast.Image);
             Bitmap __cur = new Bitmap(pbCurrent.Image);
             helper.MotionBlur(ref blur, ref __cur, 40);
-            pbLast.Image = blur;
+            //pbLast.Image = blur;
 
             Bitmap cur_img = new Bitmap(pbCurrent.Image);
             //if (frames[frames.Length - 1] != null)
@@ -271,8 +260,8 @@ namespace Detector.Motion
             Target[] targs = new List<Target>(detector.GetTargets()).ToArray();
             tracker.UpdateTargets(targs);
 
-            
 
+            bmp = detector.motionpic;
             string lable_data = "";
             #region DrawMotion
             foreach (Target t in targs)
@@ -313,7 +302,7 @@ namespace Detector.Motion
                         besttarget = obj;
                     }
                 }
-                helper.DrawBox(obj, ref bmp, col);
+                //helper.DrawBox(obj, ref bmp, col);
                 //helper.DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
             }
              #endregion
@@ -354,6 +343,7 @@ namespace Detector.Motion
                 tbDifference.Value = Math.Max(1, Math.Min(159, detector.Difference));
                 lblData.Text += " Avg Noise: " + avg.ToString("0.00");
             }
+            
 
         }
 
