@@ -333,11 +333,11 @@ namespace Detector.Motion
             #endregion
 
             double ms = ( DateTime.Now - start ).TotalMilliseconds;
-            lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data + " Ammount of noise: " + detector.RemovedTargets.ToString();
+            lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data + " Ammount of noise: " + detector.BadTargets.ToString();
            
             pbMotion.Image = bmp;
 
-            AvgMisses[AvgMisses_pos] = detector.RemovedTargets;
+            AvgMisses[AvgMisses_pos] = detector.BadTargets;
             AvgMisses_pos = (AvgMisses_pos + 1) % AvgMisses.Length;
 
             float avg = 0f;

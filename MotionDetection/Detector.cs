@@ -276,38 +276,28 @@ namespace Detector.Motion
             last_img.UnlockBits(lastimg);   // free it
 
             // Pixels now contain where there is movement in x,y
-            Target[] targs = new Target[40];
-            int targ;
-            int movement;
+            
             for (int y = 0; y < cur_img.Height; y++)    // yes this is messy, look above at the pesudo code for how and what this is doing
                 for (int x = 0; x < cur_img.Width; x++)
                 {
-                    movement = pixels[x, y];
+                    int movement = pixels[x, y];
                     if (movement == 1)
                     {
                         MotionHelper helper = this.GetBoundsFromMotion(ref pixels,
                             new Point(motion.Width, motion.Height),
                             new Point(x, y));
                         J++;
-                        targs[J] = new Target(helper.MinX, helper.MinY,
+                        Target newtarg = new Target(helper.MinX, helper.MinY,
                             helper.MaxX - helper.MinX,
                             helper.MaxY - helper.MinY);
+                        float scalex = newtarg.SizeX / _noisereduction;
+                        float scaley = newtarg.SizeY / _noisereduction;
+                        if (scalex + scaley > 1.75f)
+                            yield return newtarg;
+                        else
+                            _BadTargets++;
                     }
                 }
-            
-            foreach (Target t in targs)
-            {
-                if (t == null)
-                {
-                }else if (t.SizeX < _noisereduction || t.SizeY < _noisereduction)
-                { 
-                    _RemovedTargets = _RemovedTargets + 1;
-                }
-                else
-                {
-                    yield return t;
-                }
-            }
         }
 
         /// <summary>
@@ -522,13 +512,13 @@ namespace Detector.Motion
                 this._Difference = value;
             }
         }
-        private int _RemovedTargets;
+        private int _BadTargets;
         /// <summary>
         /// Ammount of "small" targets have been removed
         /// </summary>
-        public int RemovedTargets
+        public int BadTargets
         {
-            get { return _RemovedTargets; }
+            get { return _BadTargets; }
         }
         /// <summary>
         /// White pixels represent areas to ignore motion
@@ -555,7 +545,7 @@ namespace Detector.Motion
         {
             if (Last.Width != Current.Width || Last.Height != Current.Height)
                 Error("Image sizes differ");
-            _RemovedTargets = 0;
+            _BadTargets = 0;
             _last_img = Last;
             _cur_img = Current;
         }
