@@ -95,7 +95,7 @@
             // 
             // pbMotion
             // 
-            this.pbMotion.Location = new System.Drawing.Point(485, 15);
+            this.pbMotion.Location = new System.Drawing.Point(481, 9);
             this.pbMotion.Margin = new System.Windows.Forms.Padding(4);
             this.pbMotion.Name = "pbMotion";
             this.pbMotion.Size = new System.Drawing.Size(853, 591);
@@ -161,11 +161,12 @@
             this.lblData.AutoSize = true;
             this.lblData.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblData.ForeColor = System.Drawing.Color.Red;
-            this.lblData.Location = new System.Drawing.Point(504, 30);
+            this.lblData.Location = new System.Drawing.Point(1232, 27);
             this.lblData.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblData.Name = "lblData";
-            this.lblData.Size = new System.Drawing.Size(0, 23);
+            this.lblData.Size = new System.Drawing.Size(16, 23);
             this.lblData.TabIndex = 17;
+            this.lblData.Text = "-";
             // 
             // lbHistory
             // 

@@ -150,7 +150,7 @@ namespace Detector.Motion
             y1 = y;
             while (y1 < motion.Height && motion.Motion[x, y1] == 1)
             {
-                motion.Motion[x, y1] = 0;
+                motion.Motion[x, y1] = 2;
                 y1++;
             }
 
@@ -158,22 +158,23 @@ namespace Detector.Motion
             y1 = y - 1;
             while (y1 >= 0 && motion.Motion[x, y1] == 1)
             {
-                motion.Motion[x, y1] = 0;
+                motion.Motion[x, y1] = 2;
                 y1--;
             }
 
             //test for new scanlines to the left
-            y1 = y + 1;
-            while (y1 < motion.Height && motion.Motion[x - 1, y1] == 1)
+            y1 = y;
+            while (y1 < motion.Height && motion.Motion[x, y1] == 2)
             {
-                if (x > 0 && motion.Motion[x - 1, y1] == 1)
+                
+                if (x > 0 && motion.Motion[x -1, y1] == 1)
                 {
                     DoNextScanLine(x - 1, y1, ref motion);
                 }
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x - 1, y1] == 1)
+            while (y1 >= 0 && motion.Motion[x, y1] == 2)
             {
                 if (x > 0 && motion.Motion[x - 1, y1] == 1)
                 {
@@ -183,17 +184,17 @@ namespace Detector.Motion
             }
 
             //test for new scanlines to the right 
-            y1 = y + 1;
-            while (y1 < motion.Height && motion.Motion[x + 1, y1] == 1)
+            y1 = y;
+            while (y1 < motion.Height && motion.Motion[x, y1] == 2)
             {
-                if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
-                {
+                //if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
+                //{
                     DoNextScanLine(x + 1, y1, ref motion);
-                }
+                //}
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x + 1, y1] == 1)
+            while (y1 >= 0 && motion.Motion[x, y1] == 2)
             {
                 if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
                 {
