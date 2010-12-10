@@ -18,6 +18,63 @@ using Detector.Tracking;
 
 namespace Detector.Motion
 {
+    class PathDirection
+    {
+        private double Sin(int ang)
+        {
+            double ret = Math.PI * (double)ang / 180.0;
+            return Math.Sin(ret);
+        }
+        private double Cos(int ang)
+        {
+            double ret = Math.PI * (double)ang / 180.0;
+            return Math.Cos(ret);
+        }
+
+        public int X = 0;
+        public int Y = 0;
+        public int _CurrentAngle = 0;
+        public int CurrentAngle
+        {
+            get { return _CurrentAngle; }
+            set{_CurrentAngle = value % 360;}
+        }
+        public PathDirection(int x, int y)
+        {
+            X = x; Y = y;
+        }
+
+        public static PathDirection operator +(PathDirection a, PathDirection b)
+        {
+            return new PathDirection(a.X + b.X, a.Y + b.Y);
+        }
+        public static PathDirection operator -(PathDirection a, PathDirection b)
+        {
+            return new PathDirection(a.X - b.X, a.Y - b.Y);
+        }
+
+        public PathDirection Angle(int ang)
+        {
+            int x = (int)Math.Round(Sin(ang + CurrentAngle));
+            int y = (int)Math.Round(Cos(ang + CurrentAngle)); // sin 0 = 0, 0 = up
+
+            return this + new PathDirection(x, y * -1);
+        }
+
+        public void Move(int angle)
+        {
+            CurrentAngle = CurrentAngle + angle;
+            int x = (int)Math.Round(Sin(CurrentAngle));
+            int y = (int)Math.Round(Cos(CurrentAngle));
+            X += x;
+            Y -= y; // going up y becomes negative
+        }
+        public override string ToString()
+        {
+            return X.ToString() + " : " + Y.ToString() + " @ " + CurrentAngle.ToString();
+        }
+
+    }
     /// <summary>
     /// Data of a target
     /// </summary>
@@ -36,6 +93,80 @@ namespace Detector.Motion
             this._y = y;
             this._size_x = size_x;
             this._size_y = size_y;
+        }
+        public byte[,] Shape;
+        /// <summary>
+        /// Ammount of turns when tracing a path around the target.
+        /// </summary>
+        public int Left, Right, Forward;
+        public void ShapeDetection()
+        {
+            int lefts = 0;
+            int rights = 0;
+            int fwd = 0;
+
+            int startx = 0;
+            int starty = this.SizeY / 2;
+
+            for (int findx = 0; findx < Shape.Length / 2; findx++)
+                if (Shape[findx, starty] == 1)
+                {
+                    startx = findx - 1;
+                    break;
+                }
+
+            PathDirection dir = new PathDirection(startx, starty);
+            dir.CurrentAngle = 0; // up = 0, right = 90, left = - 90
+
+            while (true)
+            {
+                PathDirection right = dir.Angle(90);
+                PathDirection forward = dir.Angle(0);
+                PathDirection left = dir.Angle(-90);
+                if (Shape[right.X, right.Y] == 0)
+                {
+                    dir.Move(90);
+                    
+                    rights++;
+                }
+                else if (Shape[forward.X, forward.Y] == 0)
+                {
+                    dir.Move(0);
+                    fwd++;
+                }
+                else if (Shape[left.X, left.Y] == 0)
+                {
+                    dir.Move(-90);
+                    
+                    lefts++;
+                }
+                else
+                {
+                    dir.CurrentAngle *= -1;// flips its angle, rotation by 180
+                    lefts += 2; // equilivent to 2 lefts
+                }
+
+                if (dir.X == startx && dir.Y == starty)
+                    break;
+            }
+            Left = lefts;
+            Right = rights;
+            Forward = fwd;
+            //algorithm des.
+            /*direction = up
+             *while not reached start point
+             * can we move right?
+             *   move right and set new direction
+             * can we move forward
+             *  move forward
+             * can we move left
+             *  move forward and set new direction
+             * if we cant move left
+             *  turn 180 degrees
+             *end
+             * 
+            */
+
         }
 
         #region Properties
@@ -95,6 +226,7 @@ namespace Detector.Motion
         public int Height, Width;
         public int MinX, MinY, MaxX, MaxY;
         public byte[,] Motion;
+        public byte[,] Shape;
         public MotionHelper(byte[,] motion, int width, int height, int seedx, int seedy)
         {
             Height = height;
@@ -122,18 +254,10 @@ namespace Detector.Motion
             // 2 O O O  
             // 3 O X O  
             // 4 O O O
-            if (motion.Motion[x, y] != 1)
-            {
-                // this is a bit of an extension, it allows it to bypass the 1 pixel limit you will always find, increases acuracey by over 50%
-                int count = 0;
-                /*
-                for (int near_x = x - 1; near_x < x + 1; near_x++)
-                    for (int near_y = y - 1; near_y < y + 1; near_y++)
-                        if (motion.Motion[near_x, near_y] == 1)
-                            count++;*/
-                if (count == 0)
-                    return;
-            }
+            if (x >= motion.Width || y >= motion.Height)
+                return;
+            if (motion.Motion[x, y] == 0)
+                return;         
 
             if (x > motion.MaxX)
                 motion.MaxX = x;
@@ -151,6 +275,8 @@ namespace Detector.Motion
             while (y1 < motion.Height && motion.Motion[x, y1] == 1)
             {
                 motion.Motion[x, y1] = 2;
+                if (y1 > motion.MaxY)
+                    motion.MaxY = y1;
                 y1++;
             }
 
@@ -159,12 +285,14 @@ namespace Detector.Motion
             while (y1 >= 0 && motion.Motion[x, y1] == 1)
             {
                 motion.Motion[x, y1] = 2;
+                if (y1 < motion.MinY)
+                    motion.MinY = y1;
                 y1--;
             }
 
             //test for new scanlines to the left
             y1 = y;
-            while (y1 < motion.Height && motion.Motion[x, y1] == 2)
+            while (y1 < motion.Height && (motion.Motion[x, y1] == 2))
             {
                 
                 if (x > 0 && motion.Motion[x -1, y1] == 1)
@@ -174,7 +302,7 @@ namespace Detector.Motion
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x, y1] == 2)
+            while (y1 >= 0 && (motion.Motion[x, y1] == 2))
             {
                 if (x > 0 && motion.Motion[x - 1, y1] == 1)
                 {
@@ -185,16 +313,16 @@ namespace Detector.Motion
 
             //test for new scanlines to the right 
             y1 = y;
-            while (y1 < motion.Height && motion.Motion[x, y1] == 2)
+            while (y1 < motion.Height && (motion.Motion[x, y1] == 2))
             {
-                //if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
-                //{
+                if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
+                {
                     DoNextScanLine(x + 1, y1, ref motion);
-                //}
+                }
                 y1++;
             }
             y1 = y - 1;
-            while (y1 >= 0 && motion.Motion[x, y1] == 2)
+            while (y1 >= 0 && (motion.Motion[x, y1] == 2))
             {
                 if (x < motion.Width - 1 && motion.Motion[x + 1, y1] == 1)
                 {
@@ -210,9 +338,17 @@ namespace Detector.Motion
         public MotionHelper GetBoundsFromMotion(ref byte[,] motion, Point size, Point seed)
         {
             MotionHelper helper = new MotionHelper(motion, size.X, size.Y, seed.X, seed.Y);
-            DoNextScanLine(seed.X, seed.Y, ref helper);
+            DoNextScanLine(seed.X, seed.Y, ref helper); // +2 and +1 are for creating an empty  box around the whole shape, (1's never at the end /start of an array)
+            helper.Shape = new byte[helper.MaxX - helper.MinX + 4, helper.MaxY - helper.MinY + 4];
 
-            return helper; 
+            for (int x = helper.MinX; x < helper.MaxX; x++)
+                for (int y = helper.MinY; y < helper.MaxY; y++)
+                    if (helper.Motion[x, y] == 2)
+                    {
+                        helper.Shape[x - helper.MinX + 2, y - helper.MinY + 2] = 1;
+                    }
+
+                    return helper; 
         }
 
         /// <summary>
@@ -291,6 +427,10 @@ namespace Detector.Motion
                         Target newtarg = new Target(helper.MinX, helper.MinY,
                             helper.MaxX - helper.MinX,
                             helper.MaxY - helper.MinY);
+                        
+                        newtarg.Shape = helper.Shape;
+                        newtarg.ShapeDetection();
+
                         float scalex = newtarg.SizeX / _noisereduction;
                         float scaley = newtarg.SizeY / _noisereduction;
                         if (scalex + scaley > 1.75f)

@@ -72,21 +72,19 @@
             // pbLast
             // 
             this.pbLast.Image = global::Detector.Motion.Motion.Properties.Resources._1;
-            this.pbLast.Location = new System.Drawing.Point(16, 9);
-            this.pbLast.Margin = new System.Windows.Forms.Padding(4);
+            this.pbLast.Location = new System.Drawing.Point(12, 7);
             this.pbLast.Name = "pbLast";
-            this.pbLast.Size = new System.Drawing.Size(227, 148);
+            this.pbLast.Size = new System.Drawing.Size(170, 120);
             this.pbLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbLast.TabIndex = 0;
             this.pbLast.TabStop = false;
             // 
             // pbCurrent
             // 
-            this.pbCurrent.Image = global::Detector.Motion.Motion.Properties.Resources._2;
-            this.pbCurrent.Location = new System.Drawing.Point(16, 298);
-            this.pbCurrent.Margin = new System.Windows.Forms.Padding(4);
+            this.pbCurrent.Image = global::Detector.Motion.Motion.Properties.Resources._21;
+            this.pbCurrent.Location = new System.Drawing.Point(12, 242);
             this.pbCurrent.Name = "pbCurrent";
-            this.pbCurrent.Size = new System.Drawing.Size(461, 303);
+            this.pbCurrent.Size = new System.Drawing.Size(346, 246);
             this.pbCurrent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbCurrent.TabIndex = 1;
             this.pbCurrent.TabStop = false;
@@ -95,10 +93,9 @@
             // 
             // pbMotion
             // 
-            this.pbMotion.Location = new System.Drawing.Point(481, 9);
-            this.pbMotion.Margin = new System.Windows.Forms.Padding(4);
+            this.pbMotion.Location = new System.Drawing.Point(361, 7);
             this.pbMotion.Name = "pbMotion";
-            this.pbMotion.Size = new System.Drawing.Size(853, 591);
+            this.pbMotion.Size = new System.Drawing.Size(640, 480);
             this.pbMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbMotion.TabIndex = 3;
             this.pbMotion.TabStop = false;
@@ -110,10 +107,9 @@
             // cbOn
             // 
             this.cbOn.AutoSize = true;
-            this.cbOn.Location = new System.Drawing.Point(8, 7);
-            this.cbOn.Margin = new System.Windows.Forms.Padding(4);
+            this.cbOn.Location = new System.Drawing.Point(6, 6);
             this.cbOn.Name = "cbOn";
-            this.cbOn.Size = new System.Drawing.Size(49, 21);
+            this.cbOn.Size = new System.Drawing.Size(40, 17);
             this.cbOn.TabIndex = 11;
             this.cbOn.Text = "On";
             this.cbOn.UseVisualStyleBackColor = true;
@@ -121,10 +117,9 @@
             // 
             // tbSpeed
             // 
-            this.tbSpeed.Location = new System.Drawing.Point(159, 4);
-            this.tbSpeed.Margin = new System.Windows.Forms.Padding(4);
+            this.tbSpeed.Location = new System.Drawing.Point(119, 3);
             this.tbSpeed.Name = "tbSpeed";
-            this.tbSpeed.Size = new System.Drawing.Size(56, 22);
+            this.tbSpeed.Size = new System.Drawing.Size(43, 20);
             this.tbSpeed.TabIndex = 12;
             this.tbSpeed.Text = "50";
             this.tbSpeed.Validating += new System.ComponentModel.CancelEventHandler(this.tbSpeed_Validating);
@@ -133,11 +128,10 @@
             // 
             this.tbDifference.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.tbDifference.LargeChange = 10;
-            this.tbDifference.Location = new System.Drawing.Point(8, 29);
-            this.tbDifference.Margin = new System.Windows.Forms.Padding(4);
+            this.tbDifference.Location = new System.Drawing.Point(6, 24);
             this.tbDifference.Maximum = 160;
             this.tbDifference.Name = "tbDifference";
-            this.tbDifference.Size = new System.Drawing.Size(208, 56);
+            this.tbDifference.Size = new System.Drawing.Size(156, 45);
             this.tbDifference.TabIndex = 15;
             this.tbDifference.TickStyle = System.Windows.Forms.TickStyle.None;
             this.tbDifference.Value = 60;
@@ -145,10 +139,9 @@
             // 
             // pbIgnoreMotion
             // 
-            this.pbIgnoreMotion.Location = new System.Drawing.Point(251, 9);
-            this.pbIgnoreMotion.Margin = new System.Windows.Forms.Padding(4);
+            this.pbIgnoreMotion.Location = new System.Drawing.Point(188, 7);
             this.pbIgnoreMotion.Name = "pbIgnoreMotion";
-            this.pbIgnoreMotion.Size = new System.Drawing.Size(227, 148);
+            this.pbIgnoreMotion.Size = new System.Drawing.Size(170, 120);
             this.pbIgnoreMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbIgnoreMotion.TabIndex = 16;
             this.pbIgnoreMotion.TabStop = false;
@@ -161,21 +154,18 @@
             this.lblData.AutoSize = true;
             this.lblData.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblData.ForeColor = System.Drawing.Color.Red;
-            this.lblData.Location = new System.Drawing.Point(1232, 27);
-            this.lblData.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblData.Location = new System.Drawing.Point(924, 22);
             this.lblData.Name = "lblData";
-            this.lblData.Size = new System.Drawing.Size(16, 23);
+            this.lblData.Size = new System.Drawing.Size(13, 18);
             this.lblData.TabIndex = 17;
             this.lblData.Text = "-";
             // 
             // lbHistory
             // 
             this.lbHistory.FormattingEnabled = true;
-            this.lbHistory.ItemHeight = 16;
-            this.lbHistory.Location = new System.Drawing.Point(224, 4);
-            this.lbHistory.Margin = new System.Windows.Forms.Padding(4);
+            this.lbHistory.Location = new System.Drawing.Point(168, 3);
             this.lbHistory.Name = "lbHistory";
-            this.lbHistory.Size = new System.Drawing.Size(217, 84);
+            this.lbHistory.Size = new System.Drawing.Size(164, 69);
             this.lbHistory.TabIndex = 18;
             // 
             // serial
@@ -185,20 +175,18 @@
             // cbManual
             // 
             this.cbManual.AutoSize = true;
-            this.cbManual.Location = new System.Drawing.Point(69, 7);
-            this.cbManual.Margin = new System.Windows.Forms.Padding(4);
+            this.cbManual.Location = new System.Drawing.Point(52, 6);
             this.cbManual.Name = "cbManual";
-            this.cbManual.Size = new System.Drawing.Size(76, 21);
+            this.cbManual.Size = new System.Drawing.Size(61, 17);
             this.cbManual.TabIndex = 19;
             this.cbManual.Text = "Manual";
             this.cbManual.UseVisualStyleBackColor = true;
             // 
             // btnShowPorts
             // 
-            this.btnShowPorts.Location = new System.Drawing.Point(347, 159);
-            this.btnShowPorts.Margin = new System.Windows.Forms.Padding(4);
+            this.btnShowPorts.Location = new System.Drawing.Point(260, 129);
             this.btnShowPorts.Name = "btnShowPorts";
-            this.btnShowPorts.Size = new System.Drawing.Size(129, 28);
+            this.btnShowPorts.Size = new System.Drawing.Size(97, 23);
             this.btnShowPorts.TabIndex = 20;
             this.btnShowPorts.Text = "Show COM Ports";
             this.btnShowPorts.UseVisualStyleBackColor = true;
@@ -208,11 +196,10 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(16, 164);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabControl1.Location = new System.Drawing.Point(12, 133);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(461, 127);
+            this.tabControl1.Size = new System.Drawing.Size(346, 103);
             this.tabControl1.TabIndex = 21;
             // 
             // tabPage1
@@ -224,11 +211,10 @@
             this.tabPage1.Controls.Add(this.lbHistory);
             this.tabPage1.Controls.Add(this.tbDifference);
             this.tabPage1.Controls.Add(this.tbSpeed);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(453, 98);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(338, 77);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Settings";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -236,9 +222,10 @@
             // cbAuto
             // 
             this.cbAuto.AutoSize = true;
-            this.cbAuto.Location = new System.Drawing.Point(116, 56);
+            this.cbAuto.Location = new System.Drawing.Point(87, 46);
+            this.cbAuto.Margin = new System.Windows.Forms.Padding(2);
             this.cbAuto.Name = "cbAuto";
-            this.cbAuto.Size = new System.Drawing.Size(94, 21);
+            this.cbAuto.Size = new System.Drawing.Size(74, 17);
             this.cbAuto.TabIndex = 21;
             this.cbAuto.Text = "Auto Ajust";
             this.cbAuto.UseVisualStyleBackColor = true;
@@ -246,9 +233,10 @@
             // cbSave
             // 
             this.cbSave.AutoSize = true;
-            this.cbSave.Location = new System.Drawing.Point(12, 56);
+            this.cbSave.Location = new System.Drawing.Point(9, 46);
+            this.cbSave.Margin = new System.Windows.Forms.Padding(2);
             this.cbSave.Name = "cbSave";
-            this.cbSave.Size = new System.Drawing.Size(106, 21);
+            this.cbSave.Size = new System.Drawing.Size(83, 17);
             this.cbSave.TabIndex = 22;
             this.cbSave.Text = "Save Frame";
             this.cbSave.UseVisualStyleBackColor = true;
@@ -263,11 +251,10 @@
             this.tabPage2.Controls.Add(this.tbMaxY);
             this.tabPage2.Controls.Add(this.tbMinX);
             this.tabPage2.Controls.Add(this.tbMaxX);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(453, 98);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(338, 77);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Calibrate";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -275,20 +262,18 @@
             // 
             // btnCalSave
             // 
-            this.btnCalSave.Location = new System.Drawing.Point(229, 4);
-            this.btnCalSave.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCalSave.Location = new System.Drawing.Point(172, 3);
             this.btnCalSave.Name = "btnCalSave";
-            this.btnCalSave.Size = new System.Drawing.Size(39, 28);
+            this.btnCalSave.Size = new System.Drawing.Size(29, 23);
             this.btnCalSave.TabIndex = 23;
             this.btnCalSave.Text = "SV";
             this.btnCalSave.UseVisualStyleBackColor = true;
             // 
             // btnCalLoad
             // 
-            this.btnCalLoad.Location = new System.Drawing.Point(183, 4);
-            this.btnCalLoad.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCalLoad.Location = new System.Drawing.Point(137, 3);
             this.btnCalLoad.Name = "btnCalLoad";
-            this.btnCalLoad.Size = new System.Drawing.Size(39, 28);
+            this.btnCalLoad.Size = new System.Drawing.Size(29, 23);
             this.btnCalLoad.TabIndex = 22;
             this.btnCalLoad.Text = "LD";
             this.btnCalLoad.UseVisualStyleBackColor = true;
@@ -297,30 +282,27 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(276, 10);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(207, 8);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(135, 17);
+            this.label2.Size = new System.Drawing.Size(103, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Bottom Right of cam";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(55, 10);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(41, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 17);
+            this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 4;
             this.label1.Text = "Top Left of cam";
             // 
             // tbMinY
             // 
-            this.tbMinY.Location = new System.Drawing.Point(8, 70);
-            this.tbMinY.Margin = new System.Windows.Forms.Padding(4);
+            this.tbMinY.Location = new System.Drawing.Point(6, 57);
             this.tbMinY.Maximum = 180;
             this.tbMinY.Name = "tbMinY";
-            this.tbMinY.Size = new System.Drawing.Size(213, 56);
+            this.tbMinY.Size = new System.Drawing.Size(160, 45);
             this.tbMinY.TabIndex = 2;
             this.tbMinY.TickFrequency = 0;
             this.tbMinY.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -328,11 +310,10 @@
             // 
             // tbMaxY
             // 
-            this.tbMaxY.Location = new System.Drawing.Point(229, 70);
-            this.tbMaxY.Margin = new System.Windows.Forms.Padding(4);
+            this.tbMaxY.Location = new System.Drawing.Point(172, 57);
             this.tbMaxY.Maximum = 180;
             this.tbMaxY.Name = "tbMaxY";
-            this.tbMaxY.Size = new System.Drawing.Size(213, 56);
+            this.tbMaxY.Size = new System.Drawing.Size(160, 45);
             this.tbMaxY.TabIndex = 1;
             this.tbMaxY.TickFrequency = 0;
             this.tbMaxY.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -340,11 +321,10 @@
             // 
             // tbMinX
             // 
-            this.tbMinX.Location = new System.Drawing.Point(8, 36);
-            this.tbMinX.Margin = new System.Windows.Forms.Padding(4);
+            this.tbMinX.Location = new System.Drawing.Point(6, 29);
             this.tbMinX.Maximum = 180;
             this.tbMinX.Name = "tbMinX";
-            this.tbMinX.Size = new System.Drawing.Size(213, 56);
+            this.tbMinX.Size = new System.Drawing.Size(160, 45);
             this.tbMinX.TabIndex = 0;
             this.tbMinX.TickFrequency = 0;
             this.tbMinX.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -352,11 +332,10 @@
             // 
             // tbMaxX
             // 
-            this.tbMaxX.Location = new System.Drawing.Point(229, 36);
-            this.tbMaxX.Margin = new System.Windows.Forms.Padding(4);
+            this.tbMaxX.Location = new System.Drawing.Point(172, 29);
             this.tbMaxX.Maximum = 180;
             this.tbMaxX.Name = "tbMaxX";
-            this.tbMaxX.Size = new System.Drawing.Size(213, 56);
+            this.tbMaxX.Size = new System.Drawing.Size(160, 45);
             this.tbMaxX.TabIndex = 3;
             this.tbMaxX.TickFrequency = 0;
             this.tbMaxX.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -364,9 +343,9 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1352, 615);
+            this.ClientSize = new System.Drawing.Size(1014, 500);
             this.Controls.Add(this.btnShowPorts);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.lblData);
@@ -374,7 +353,6 @@
             this.Controls.Add(this.pbMotion);
             this.Controls.Add(this.pbCurrent);
             this.Controls.Add(this.pbLast);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Motion Detection";
             this.Load += new System.EventHandler(this.Form1_Load);

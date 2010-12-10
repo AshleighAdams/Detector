@@ -37,7 +37,7 @@ namespace Detector.Motion
         LinkedList<AnimationHandeler> trackingobjs = new LinkedList<AnimationHandeler>();
         
         //CVCapture cam = new CVCapture();
-        Capture cam = new Capture(0);
+        //Capture cam = new Capture(0);
         
         
         MotionDetector detector = new MotionDetector();
@@ -137,14 +137,14 @@ namespace Detector.Motion
 
             tracker.UpdateTrackedObject += delegate(ObjectTrackedArgs args)
             {
-                Bitmap img = new Bitmap(HiResFrame);
+                /*Bitmap img = new Bitmap(HiResFrame);
                 
                 foreach(AnimationHandeler hand in trackingobjs)
                     if(hand.Obj == args.Object)
                     {
                         hand.bitmaps.AddLast(GetImage(ref img, args.Object));
                         break;
-                    }
+                    }*/
             };
 
             tracker.LostTrackedObject += delegate(ObjectTrackedArgs args)
@@ -223,16 +223,16 @@ namespace Detector.Motion
                 //pbCurrent.Image = nextframe.ToBitmap();
             //}
 
-            Image<Bgr, byte> frame = cam.QuerySmallFrame();
+            //Image<Bgr, byte> frame = cam.QuerySmallFrame();
 
-            HiResFrame = cam.QueryFrame().ToBitmap();
+            //HiResFrame = cam.QueryFrame().ToBitmap();
 
-            tracker.SetFrameSize(frame.Size.Width, frame.Size.Height);
+            tracker.SetFrameSize(pbCurrent.Width, pbCurrent.Height);
 
             //pbCurrent.Image = frame.ToBitmap();
 
-            if (pbCurrent.Image == null || pbLast.Image == null)
-                return;
+            //if (pbCurrent.Image == null || pbLast.Image == null)
+            //    return;
             
             Color[] cols = {
                                Color.Blue,
@@ -267,11 +267,8 @@ namespace Detector.Motion
             foreach (Target t in targs)
             {
 
-                helper.DrawBox(t.X - detector.MaxJoinDistance,
-                    t.Y - detector.MaxJoinDistance,
-                    t.SizeX + 2 * detector.MaxJoinDistance,
-                    t.SizeY + 2 * detector.MaxJoinDistance,
-                    ref bmp, Color.FromArgb(255, 255, 0, 0),false);
+                helper.DrawBox(t,
+                    ref bmp, Color.FromArgb(255, 255, 0, 0));
 
             }
             #endregion
@@ -358,7 +355,7 @@ namespace Detector.Motion
         }
 
         private void pbIgnoreMotion_MouseUp(object sender, MouseEventArgs e)
-        {
+        {/*
             if (pbIgnoreMotion.Image == null)
             {
                 pbIgnoreMotion.Image = pbCurrent.Image;
@@ -381,7 +378,7 @@ namespace Detector.Motion
             helper.DrawBox(x, y, ex - x, ey - y, ref ebmp, Color.White, true);
 
             pbIgnoreMotion.Image = ebmp;
-            detector.IgnoreMotion = ebmp;
+            detector.IgnoreMotion = ebmp;*/
         }
 
         private void pbIgnoreMotion_MouseDoubleClick(object sender, MouseEventArgs e)
