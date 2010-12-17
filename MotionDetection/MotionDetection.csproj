@@ -73,13 +73,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimationHandeler.cs" />
+    <Compile Include="CamTest.cs" />
+    <Compile Include="Detector\Helper.cs" />
+    <Compile Include="Detector\ObjectTracker.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Detector.cs" />
+    <Compile Include="Detector\Detector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.tmrCheckMotion = new System.Windows.Forms.Timer(this.components);
             this.cbOn = new System.Windows.Forms.CheckBox();
             this.tbSpeed = new System.Windows.Forms.TextBox();
             this.tbDifference = new System.Windows.Forms.TrackBar();
@@ -55,6 +54,7 @@
             this.pbMotion = new System.Windows.Forms.PictureBox();
             this.pbCurrent = new System.Windows.Forms.PictureBox();
             this.pbLast = new System.Windows.Forms.PictureBox();
+            this.tmrCheckMotion = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tbDifference)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -69,15 +69,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLast)).BeginInit();
             this.SuspendLayout();
             // 
-            // tmrCheckMotion
-            // 
-            this.tmrCheckMotion.Tick += new System.EventHandler(this.tmrCheckMotion_Tick);
-            // 
             // cbOn
             // 
             this.cbOn.AutoSize = true;
             this.cbOn.Location = new System.Drawing.Point(8, 7);
-            this.cbOn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbOn.Margin = new System.Windows.Forms.Padding(4);
             this.cbOn.Name = "cbOn";
             this.cbOn.Size = new System.Drawing.Size(49, 21);
             this.cbOn.TabIndex = 11;
@@ -88,7 +84,7 @@
             // tbSpeed
             // 
             this.tbSpeed.Location = new System.Drawing.Point(159, 4);
-            this.tbSpeed.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbSpeed.Margin = new System.Windows.Forms.Padding(4);
             this.tbSpeed.Name = "tbSpeed";
             this.tbSpeed.Size = new System.Drawing.Size(56, 22);
             this.tbSpeed.TabIndex = 12;
@@ -100,7 +96,7 @@
             this.tbDifference.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.tbDifference.LargeChange = 10;
             this.tbDifference.Location = new System.Drawing.Point(8, 30);
-            this.tbDifference.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbDifference.Margin = new System.Windows.Forms.Padding(4);
             this.tbDifference.Maximum = 160;
             this.tbDifference.Name = "tbDifference";
             this.tbDifference.Size = new System.Drawing.Size(208, 56);
@@ -126,7 +122,7 @@
             this.lbHistory.FormattingEnabled = true;
             this.lbHistory.ItemHeight = 16;
             this.lbHistory.Location = new System.Drawing.Point(224, 4);
-            this.lbHistory.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lbHistory.Margin = new System.Windows.Forms.Padding(4);
             this.lbHistory.Name = "lbHistory";
             this.lbHistory.Size = new System.Drawing.Size(217, 84);
             this.lbHistory.TabIndex = 18;
@@ -139,7 +135,7 @@
             // 
             this.cbManual.AutoSize = true;
             this.cbManual.Location = new System.Drawing.Point(69, 7);
-            this.cbManual.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbManual.Margin = new System.Windows.Forms.Padding(4);
             this.cbManual.Name = "cbManual";
             this.cbManual.Size = new System.Drawing.Size(76, 21);
             this.cbManual.TabIndex = 19;
@@ -149,7 +145,7 @@
             // btnShowPorts
             // 
             this.btnShowPorts.Location = new System.Drawing.Point(347, 159);
-            this.btnShowPorts.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnShowPorts.Margin = new System.Windows.Forms.Padding(4);
             this.btnShowPorts.Name = "btnShowPorts";
             this.btnShowPorts.Size = new System.Drawing.Size(129, 28);
             this.btnShowPorts.TabIndex = 20;
@@ -162,7 +158,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(16, 164);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(461, 127);
@@ -178,9 +174,9 @@
             this.tabPage1.Controls.Add(this.tbDifference);
             this.tabPage1.Controls.Add(this.tbSpeed);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage1.Size = new System.Drawing.Size(453, 98);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Settings";
@@ -219,9 +215,9 @@
             this.tabPage2.Controls.Add(this.tbMinX);
             this.tabPage2.Controls.Add(this.tbMaxX);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage2.Size = new System.Drawing.Size(453, 98);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Calibrate";
@@ -231,7 +227,7 @@
             // btnCalSave
             // 
             this.btnCalSave.Location = new System.Drawing.Point(229, 4);
-            this.btnCalSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCalSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnCalSave.Name = "btnCalSave";
             this.btnCalSave.Size = new System.Drawing.Size(39, 28);
             this.btnCalSave.TabIndex = 23;
@@ -241,7 +237,7 @@
             // btnCalLoad
             // 
             this.btnCalLoad.Location = new System.Drawing.Point(183, 4);
-            this.btnCalLoad.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCalLoad.Margin = new System.Windows.Forms.Padding(4);
             this.btnCalLoad.Name = "btnCalLoad";
             this.btnCalLoad.Size = new System.Drawing.Size(39, 28);
             this.btnCalLoad.TabIndex = 22;
@@ -272,7 +268,7 @@
             // tbMinY
             // 
             this.tbMinY.Location = new System.Drawing.Point(8, 70);
-            this.tbMinY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbMinY.Margin = new System.Windows.Forms.Padding(4);
             this.tbMinY.Maximum = 180;
             this.tbMinY.Name = "tbMinY";
             this.tbMinY.Size = new System.Drawing.Size(213, 56);
@@ -284,7 +280,7 @@
             // tbMaxY
             // 
             this.tbMaxY.Location = new System.Drawing.Point(229, 70);
-            this.tbMaxY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbMaxY.Margin = new System.Windows.Forms.Padding(4);
             this.tbMaxY.Maximum = 180;
             this.tbMaxY.Name = "tbMaxY";
             this.tbMaxY.Size = new System.Drawing.Size(213, 56);
@@ -296,7 +292,7 @@
             // tbMinX
             // 
             this.tbMinX.Location = new System.Drawing.Point(8, 36);
-            this.tbMinX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbMinX.Margin = new System.Windows.Forms.Padding(4);
             this.tbMinX.Maximum = 180;
             this.tbMinX.Name = "tbMinX";
             this.tbMinX.Size = new System.Drawing.Size(213, 56);
@@ -308,7 +304,7 @@
             // tbMaxX
             // 
             this.tbMaxX.Location = new System.Drawing.Point(229, 36);
-            this.tbMaxX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbMaxX.Margin = new System.Windows.Forms.Padding(4);
             this.tbMaxX.Maximum = 180;
             this.tbMaxX.Name = "tbMaxX";
             this.tbMaxX.Size = new System.Drawing.Size(213, 56);
@@ -320,7 +316,7 @@
             // pbIgnoreMotion
             // 
             this.pbIgnoreMotion.Location = new System.Drawing.Point(251, 9);
-            this.pbIgnoreMotion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbIgnoreMotion.Margin = new System.Windows.Forms.Padding(4);
             this.pbIgnoreMotion.Name = "pbIgnoreMotion";
             this.pbIgnoreMotion.Size = new System.Drawing.Size(227, 148);
             this.pbIgnoreMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -333,7 +329,7 @@
             // pbMotion
             // 
             this.pbMotion.Location = new System.Drawing.Point(481, 9);
-            this.pbMotion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbMotion.Margin = new System.Windows.Forms.Padding(4);
             this.pbMotion.Name = "pbMotion";
             this.pbMotion.Size = new System.Drawing.Size(853, 591);
             this.pbMotion.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -343,7 +339,7 @@
             // pbCurrent
             // 
             this.pbCurrent.Location = new System.Drawing.Point(16, 298);
-            this.pbCurrent.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbCurrent.Margin = new System.Windows.Forms.Padding(4);
             this.pbCurrent.Name = "pbCurrent";
             this.pbCurrent.Size = new System.Drawing.Size(461, 303);
             this.pbCurrent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -355,18 +351,23 @@
             // pbLast
             // 
             this.pbLast.Location = new System.Drawing.Point(16, 9);
-            this.pbLast.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pbLast.Margin = new System.Windows.Forms.Padding(4);
             this.pbLast.Name = "pbLast";
             this.pbLast.Size = new System.Drawing.Size(227, 148);
             this.pbLast.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbLast.TabIndex = 0;
             this.pbLast.TabStop = false;
             // 
+            // tmrCheckMotion
+            // 
+            this.tmrCheckMotion.Interval = 50;
+            this.tmrCheckMotion.Tick += new System.EventHandler(this.tmrCheckMotion_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1352, 615);
+            this.ClientSize = new System.Drawing.Size(1018, 615);
             this.Controls.Add(this.btnShowPorts);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.lblData);
@@ -374,7 +375,7 @@
             this.Controls.Add(this.pbMotion);
             this.Controls.Add(this.pbCurrent);
             this.Controls.Add(this.pbLast);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Motion Detection";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -402,7 +403,6 @@
         private System.Windows.Forms.PictureBox pbLast;
         private System.Windows.Forms.PictureBox pbCurrent;
         private System.Windows.Forms.PictureBox pbMotion;
-        private System.Windows.Forms.Timer tmrCheckMotion;
         private System.Windows.Forms.CheckBox cbOn;
         private System.Windows.Forms.TextBox tbSpeed;
         private System.Windows.Forms.TrackBar tbDifference;
@@ -425,6 +425,7 @@
         private System.Windows.Forms.Button btnCalLoad;
         private System.Windows.Forms.CheckBox cbAuto;
         private System.Windows.Forms.CheckBox cbSave;
+        private System.Windows.Forms.Timer tmrCheckMotion;
     }
 }
 

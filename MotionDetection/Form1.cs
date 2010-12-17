@@ -39,16 +39,12 @@ namespace Detector.Motion
         //CVCapture cam = new CVCapture();
         Capture cam = new Capture(0);
         
-        
         MotionDetector detector = new MotionDetector();
         ObjectTracker tracker = new ObjectTracker();
         Detector.Helper.ImageHelpers helper = new Detector.Helper.ImageHelpers();
         public Form1()
         {
-            InitializeComponent();
-            //cam.SetCaptureProperty(CAP_PROP.CV_CAP_PROP_FRAME_HEIGHT, 480);
-            //cam.SetCaptureProperty(CAP_PROP.CV_CAP_PROP_FRAME_WIDTH, 640);
-            
+            InitializeComponent(); 
             
         }
         private Bitmap GetImage(ref Bitmap frame, ObjectTracked obj)
@@ -121,6 +117,7 @@ namespace Detector.Motion
 
         private void Form1_Load(object senderr, EventArgs ee)
         {
+            
             //serial.Open();
             tracker.NewObjectTracked += delegate(ObjectTrackedArgs args)
             {
@@ -196,7 +193,7 @@ namespace Detector.Motion
 
         private void tbSpeed_Validating(object sender, CancelEventArgs e)
         {
-            tmrCheckMotion.Interval = int.Parse( tbSpeed.Text );
+            //tmrCheckMotion.Interval = int.Parse( tbSpeed.Text );
         }
 
         private void tbDifference_Validating(object sender, CancelEventArgs e)
@@ -224,7 +221,7 @@ namespace Detector.Motion
             //}
 
             Image<Bgr, byte> frame = cam.QuerySmallFrame();
-
+            
             HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(pbCurrent.Width, pbCurrent.Height);
@@ -263,24 +260,13 @@ namespace Detector.Motion
 
             bmp = detector.motionpic;
             string lable_data = "";
-            #region DrawMotion
-            foreach (Target t in targs)
-            {
-
-                helper.DrawBox(t,
-                    ref bmp, Color.FromArgb(255, 255, 0, 0));
-
-            }
-            #endregion
-            
             #region DrawTargets
             ObjectTracked[] objs = new List<ObjectTracked>(tracker.GetObjects()).ToArray();
             lable_data += "Tracking " + objs.Length.ToString() + " objects\n";
             int count = 0;
-            ObjectTracked besttarget = null;
+            
             foreach (ObjectTracked obj in objs)
             {
-                lable_data += "ID: " + obj.ID + " OJR: " + obj.ObjectRecogForwads.ToString() + ":" + obj.ObjectRecogLefts.ToString() + ":" + obj.ObjectRecogRights.ToString() + "\n";
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
                 a = Math.Min(255, Math.Max(0, a));
                 Color col;
@@ -288,22 +274,13 @@ namespace Detector.Motion
                 if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
                     col = Color.FromArgb((int)a, 255, 0, 0);
                 count++;
-                if (besttarget == null)
-                    besttarget = obj;
-                else
-                {
-                    if (Math.Abs(obj.Velocity.X) + Math.Abs(obj.Velocity.Y)
-                        >
-                        Math.Abs(besttarget.Velocity.X) + Math.Abs(besttarget.Velocity.Y))
-                    {
-                        besttarget = obj;
-                    }
-                }
-                //helper.DrawBox(obj, ref bmp, col);
+                lable_data += obj.ID.ToString() + " " + obj.Score.ToString() + "\n";
+                helper.DrawBox(obj, ref bmp, col);
                 //helper.DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
             }
              #endregion
 
+            /*
             #region MoveServo
 
             if (besttarget != null)
@@ -317,7 +294,7 @@ namespace Detector.Motion
                 SetServoPos((int)yaw, (int)pitch);
             }
             #endregion
-
+            */
             double ms = ( DateTime.Now - start ).TotalMilliseconds;
             lblData.Text = "Frametime: " + ms.ToString() + " (" + ( Math.Round( 1000 / ms ) ).ToString() + ") " + lable_data + " Ammount of noise: " + detector.BadTargets.ToString();
            
@@ -501,6 +478,8 @@ namespace Detector.Motion
         {
 
         }
+
+        
 
 
     }
