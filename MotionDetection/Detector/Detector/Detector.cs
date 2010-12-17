@@ -22,80 +22,7 @@ namespace Detector.Motion
     /// <summary>
     /// Data of a target
     /// </summary>
-    public class Target
-    {
-        /// <summary>
-        /// Set the infomation for the target
-        /// </summary>
-        /// <param name="x">Postion X the target starts</param>
-        /// <param name="y">Postion Y the target starts</param>
-        /// <param name="size_x">The width of the target</param>
-        /// <param name="size_y">The length of the target</param>
-        public Target(int x, int y, int size_x, int size_y) 
-        {
-            this._x = x;
-            this._y = y;
-            this._size_x = size_x;
-            this._size_y = size_y;
-        }
-        public byte[,] Shape;
-        public void ShapeDetection()
-        {
-        }
-        
-
-        #region Properties
-        public int X
-        {
-            get
-            {
-                return this._x;
-            }
-            set
-            {
-                this._x = value;
-            }
-        }
-        public int Y
-        {
-            get
-            {
-                return this._y;
-            }
-            set
-            {
-                this._y = value;
-            }
-        }
-        public int SizeX
-        {
-            get
-            {
-                return this._size_x;
-            }
-            set
-            {
-                this._size_x = value;
-            }
-        }
-        public int SizeY
-        {
-            get
-            {
-                return this._size_y;
-            }
-            set
-            {
-                this._size_y = value;
-            }
-        }
-        #endregion
-        private int _x = 0;
-        private int _y = 0;
-        private int _size_x = 0;
-        private int _size_y = 0;
-    }
-
+    
     public class MotionHelper
     {
         public int Height, Width;
@@ -466,6 +393,7 @@ namespace Detector.Motion
                 Error("Image sizes are not the same");
             if (curimg.PixelFormat != lastimg.PixelFormat)
                 Error("PixelFormat is not the same");
+            byte[,] pixeldatablur = new byte[curimg.Width,curimg.Height];
             try
             {
                 byte* row_current;
@@ -506,6 +434,39 @@ namespace Detector.Motion
                             pixeldata[x, y] = 0;
                         }
                     };
+                //lol do blur here
+                int blurscale = 2;
+                for (int x = 1; x < curimg.Width - 1; x +=1)
+                    for (int y = 1; y < curimg.Width - 1; y += 1) // loop through evry 2 pixels
+                    {
+                        int count = 0;
+                        for (int xx = x - blurscale; xx < x + blurscale; xx++) // loop around this pixel
+                            for (int yy = y - blurscale; yy < y + blurscale; yy++)
+                                if (xx > 0 && xx < curimg.Width &&
+                                    yy > 0 && yy < curimg.Height)
+                                    count += pixeldata[xx, yy];
+                            
+                        if (count > 1)
+                            for (int xx = x - blurscale; xx < x + blurscale; xx++)
+                                for (int yy = y - blurscale; yy < y + blurscale; yy++)
+                                    if (xx > 0 && xx < curimg.Width &&
+                                        yy > 0 && yy < curimg.Height)
+                                    {
+                                        row_current = (byte*)curimg.Scan0.ToPointer() + (curimg.Stride * yy);
+                                        B = x * 3 + 0;
+                                        G = x * 3 + 1;
+                                        R = x * 3 + 2;
+
+                                        row_current[R] = 255;
+                                        row_current[G] = 255;
+                                        row_current[B] = 255;
+
+                                        pixeldatablur[xx, yy] = 1;
+                                    }
+                    };
+                pixeldata = pixeldatablur;
+                    
+
             }
             catch (Exception ex) // We dont want to halt any execution...
             {
@@ -633,7 +594,7 @@ namespace Detector.Motion
                 Error(ex.Message);
             }
         }
-        private int _noisereduction = 2;
+        private int _noisereduction = 4;
         private int _maxjoindistance = 10; // TODO REMOVE REFRENCES
         private int _Difference = 50;
         private Image _last_img = null;

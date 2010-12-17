@@ -37,7 +37,7 @@ namespace Detector.Motion
         LinkedList<AnimationHandeler> trackingobjs = new LinkedList<AnimationHandeler>();
         
         //CVCapture cam = new CVCapture();
-        Capture cam = new Capture(0);
+        Capture cam = new Capture();//("C:\\Users\\C0BRA\\Downloads\\cctv.avi");
         
         MotionDetector detector = new MotionDetector();
         ObjectTracker tracker = new ObjectTracker();
@@ -134,6 +134,11 @@ namespace Detector.Motion
 
             tracker.UpdateTrackedObject += delegate(ObjectTrackedArgs args)
             {
+                if (args.Object.LifeTime.TotalMilliseconds > 500 && args.Object.LifeTime.TotalMilliseconds < 675)
+                {
+
+                }
+                return;
                 Bitmap img = new Bitmap(HiResFrame);
                 
                 foreach(AnimationHandeler hand in trackingobjs)
@@ -205,6 +210,7 @@ namespace Detector.Motion
         private Image[] frames = new Image[6];
         private int[] AvgMisses = new int[50];
         int AvgMisses_pos = 0;
+        int Count = 0;
         private void tmrCheckMotion_Tick(object sender, EventArgs e)
         {
 
@@ -219,15 +225,19 @@ namespace Detector.Motion
                 
                 //pbCurrent.Image = nextframe.ToBitmap();
             //}
-
-            Image<Bgr, byte> frame = cam.QuerySmallFrame();
+            try
+            {
+                Image<Bgr, byte> frame = cam.QuerySmallFrame();
+                HiResFrame = frame.ToBitmap(); //cam.QueryFrame().ToBitmap();
+                pbCurrent.Image = frame.ToBitmap();
+            }
+            catch { return; }
             
-            HiResFrame = cam.QueryFrame().ToBitmap();
 
             tracker.SetFrameSize(pbCurrent.Width, pbCurrent.Height);
 
-            pbCurrent.Image = frame.ToBitmap();
-
+            
+            
             if (pbCurrent.Image == null || pbLast.Image == null)
                 return;
             
@@ -246,7 +256,9 @@ namespace Detector.Motion
             
             Bitmap blur = new Bitmap(pbLast.Image);
             Bitmap __cur = new Bitmap(pbCurrent.Image);
-            helper.MotionBlur(ref blur, ref __cur, 40);
+            if(Count % 25 == 0)
+                helper.MotionBlur(ref blur, ref __cur, 5);
+            Count++;
             pbLast.Image = blur;
 
             Bitmap cur_img = new Bitmap(pbCurrent.Image);
@@ -261,10 +273,16 @@ namespace Detector.Motion
             bmp = detector.motionpic;
             string lable_data = "";
             #region DrawTargets
-            ObjectTracked[] objs = new List<ObjectTracked>(tracker.GetObjects()).ToArray();
-            lable_data += "Tracking " + objs.Length.ToString() + " objects\n";
+            LinkedList<ObjectTracked> objs = tracker.GetObjects();
+            lable_data += "Tracking " + objs.Count.ToString() + " objects\n";
             int count = 0;
-            
+
+            foreach (Target t in targs)
+            {
+                //helper.DrawBox(t, ref bmp, Color.Red);
+                //lable_data += "TARGET\n";
+            }
+
             foreach (ObjectTracked obj in objs)
             {
                 double a = 255 - (((DateTime.Now - obj.LastSeen)).TotalMilliseconds / tracker.UnseenRemovalLimit)*255 ;
@@ -274,7 +292,7 @@ namespace Detector.Motion
                 if( (DateTime.Now - obj.LastSeen).TotalMilliseconds > 500) // hell, we are no longer activeley tracking this guy 
                     col = Color.FromArgb((int)a, 255, 0, 0);
                 count++;
-                lable_data += obj.ID.ToString() + " " + obj.Score.ToString() + "\n";
+                //lable_data += obj.ID.ToString() + " " + obj.Score.ToString() + "\n";
                 helper.DrawBox(obj, ref bmp, col);
                 //helper.DrawBox(obj.Position.X, obj.Position.Y, obj.Size.X, obj.Size.Y, ref bmp, col);
             }

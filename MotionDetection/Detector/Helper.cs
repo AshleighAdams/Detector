@@ -52,9 +52,10 @@ namespace Detector.Helper
                     G = x * 3 + 1;
                     R = x * 3 + 2;
 
-                    row_blur[R] = (byte)((int)row_blur[R] + (((int)row_current[R] - (int)row_blur[R]) / ammount));
-                    row_blur[G] = (byte)((int)row_blur[G] + (((int)row_current[G] - (int)row_blur[G]) / ammount));
-                    row_blur[B] = (byte)((int)row_blur[B] + (((int)row_current[B] - (int)row_blur[B]) / ammount));
+
+                    row_blur[R] = (byte)(row_blur[R] + (byte)Math.Ceiling( ((double)row_current[R] - (double)row_blur[R]) / (double)ammount ));
+                    row_blur[G] = (byte)(row_blur[G] + (byte)Math.Ceiling(((double)row_current[G] - (double)row_blur[G]) / (double)ammount));
+                    row_blur[B] = (byte)(row_blur[B] + (byte)Math.Ceiling(((double)row_current[B] - (double)row_blur[B]) / (double)ammount));
                 }
             imagetoblur.UnlockBits(blur);
             current.UnlockBits(cur);
